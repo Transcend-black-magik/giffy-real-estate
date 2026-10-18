@@ -16,4 +16,4 @@ npm run build
 npm run preview
 ```
 
-Navigation sections, three hero copy slides, responsive mobile menu, service accordions and contact dialogs are implemented. Contact actions open the visitor's email client or WhatsApp; no booking data is submitted or stored. Property imagery is illustrative and does not represent live listings. Hero image is an AI generated architectural concept. Company contact information and service scope come from https://giffyrealestate.com/.
+Hero-only landing page with three hero copy slides, a responsive mobile menu and contact dialogs. Navigation items open topic-specific contact dialogs until dedicated pages are added. Contact actions open the visitor's email client or WhatsApp; no booking data is submitted or stored. Property imagery is illustrative and does not represent live listings. Hero image is an AI generated architectural concept. Company contact information and service scope come from https://giffyrealestate.com/.
