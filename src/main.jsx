@@ -15,7 +15,8 @@ function App() {
     <main className="hero" id="home" aria-label="Giffy Real Estate">
       <div className="reference-stage">
         <div className="reference-art" role="img" aria-label="A white sculptural villa set between dramatic rocky cliffs at dusk" />
-        <h1 className="sr-only">The infinite precision of living</h1>
+        <h1 className="hero-headline" aria-label="Experience Smarter Real Estate Investment in Dubai"><span>Experience</span><span>Smarter Real</span><span>Estate</span><span>Investment</span><span>in Dubai</span></h1>
+        <p className="hero-description">Whether you’re an investor, buyer, or seller, Giffy Real Estate LLC delivers unmatched insight into Dubai’s property market. Get expert support for off-plan projects, Golden Visa applications, and end-to-end property management.</p>
         <a className="hotspot logo-hit" href="#home" aria-label="Giffy Real Estate home" />
         <nav aria-label="Main navigation">
           <button className="hotspot project-hit" onClick={() => inquire('Projects')}>Project</button>
@@ -25,7 +26,6 @@ function App() {
         <button className="hotspot viewing-hit" onClick={() => inquire('Book a viewing')}>Book a Viewing</button>
         <section className="sr-only" aria-label="Reference property specifications">
           <p>House Area: 160 square metres</p><p>House Type C ? Comfort Line</p>
-          <p>A vision that transcends property and space, where unmatched craftsmanship inspires elegance and innovation to enrich lives.</p>
         </section>
         <button className="hotspot previous-hit" aria-label="Preview previous residence" onClick={() => setPreview(true)} />
         <button className="hotspot next-hit" aria-label="Preview next residence" onClick={() => setPreview(true)} />
