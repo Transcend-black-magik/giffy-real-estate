@@ -1,0 +1,4 @@
+Original reference artwork: Modern Architecture Real Estate Website Design by Nixtio
+Source: https://dribbble.com/shots/27151302-Modern-Architecture-Real-Estate-Website-Design
+Artwork: https://cdn.dribbble.com/userupload/46956425/file/40cfefb59f8d7f47f79d42b7e538213c.png
+The image includes the background, headline, navigation, property panel, map, and thumbnails as flattened pixels. CSS crops the outer presentation frame. Transparent HTML controls provide navigation/contact interactions; accessible text describes the artwork. This is a visual reference prototype, not a set of independently editable visual elements. Property details are reference-design content, not verified Giffy listings.
