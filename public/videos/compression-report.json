@@ -1,0 +1,30 @@
+[
+  {
+    "file": "giffy-award.mp4",
+    "originalBytes": 99564606,
+    "compressedBytes": 2883590,
+    "reductionPercent": 97.1,
+    "fastStart": true
+  },
+  {
+    "file": "giffy-award-low.mp4",
+    "originalBytes": 99564606,
+    "compressedBytes": 1093930,
+    "reductionPercent": 98.9,
+    "fastStart": true
+  },
+  {
+    "file": "giffy-story.mp4",
+    "originalBytes": 336994537,
+    "compressedBytes": 4583657,
+    "reductionPercent": 98.6,
+    "fastStart": true
+  },
+  {
+    "file": "giffy-story-low.mp4",
+    "originalBytes": 336994537,
+    "compressedBytes": 1814255,
+    "reductionPercent": 99.5,
+    "fastStart": true
+  }
+]
