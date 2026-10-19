@@ -111,15 +111,138 @@ function App() {
      const tick = time => { lenis.raf(time); frame = requestAnimationFrame(tick); };
      frame = requestAnimationFrame(tick);
    }
-   const revealObserver = new IntersectionObserver(entries => entries.forEach(entry => {
-     if (entry.isIntersecting) { entry.target.classList.add('is-visible'); revealObserver.unobserve(entry.target); }
-   }), { threshold: 0.12 });
-   document.querySelectorAll('.reveal').forEach(element => revealObserver.observe(element));
+   // Observe the content itself, including cards entering horizontally and pinned panels.
+   const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+   const entranceRoots = document.querySelectorAll('#developers, #featured-properties, #services, #property-management, .contact-invitation, .classic-footer');
+   const entranceTargets = [];
+   const revealObserver = new IntersectionObserver(entries => {
+    let batchIndex = 0;
+    entries.forEach(entry => {
+     if (!entry.isIntersecting) return;
+     entry.target.style.setProperty('--entrance-delay', `${(batchIndex++ % 4) * 65}ms`);
+     entry.target.classList.add('entrance-visible');
+     revealObserver.unobserve(entry.target);
+    });
+   }, { threshold: .08, rootMargin: '0px 0px -5% 0px' });
+   entranceRoots.forEach(root => {
+    root.classList.add('is-visible');
+    root.querySelectorAll('.reveal-item').forEach(element => element.classList.remove('reveal-item'));
+    root.querySelectorAll('h2, h3, p, address, button, a, img, figcaption, dt, dd, .section-index, .craft-eyebrow, .experience-eyebrow, .services-scroll-heading > span, .services-card-number, .property-tag, .property-note, .property-meta > strong, .reference-project-count, .reference-leadership-brand, .reference-care, .classic-footer-bottom > span, .classic-footer-skyline').forEach(element => {
+     if (element.closest('[aria-hidden="true"]') && !element.classList.contains('classic-footer-skyline')) return;
+     if (element.matches('img') && element.closest('a')) {
+      // Animate the image independently; the link itself remains a stable hit target.
+     } else if (element.matches('a') && element.querySelector('img, h3')) return;
+     element.classList.add('content-entrance');
+     if (element.matches('img, .classic-footer-skyline')) element.classList.add('entrance-media');
+     if (element.matches('button, a')) element.classList.add('entrance-action');
+     entranceTargets.push(element);
+     if (!motionPreference.matches) revealObserver.observe(element);
+    });
+   });
+   const showAllEntrances = () => {
+    if (motionPreference.matches) {
+     entranceTargets.forEach(element => element.classList.add('entrance-visible'));
+     revealObserver.disconnect();
+    }
+   };
+   showAllEntrances();
+   motionPreference.addEventListener('change', showAllEntrances);
    const videoObserver = new IntersectionObserver(entries => entries.forEach(entry => {
      if (!entry.isIntersecting) entry.target.pause();
    }), { threshold: 0.05 });
    videoRefs.current.filter(Boolean).forEach(video => videoObserver.observe(video));
-   return () => { if(frame) cancelAnimationFrame(frame); lenis?.destroy(); revealObserver.disconnect(); videoObserver.disconnect(); };
+   // Gently finish a nearly complete card transition without snapping the whole page.
+   let settleTimer, previousScroll = window.scrollY, scrollingDown = false, settling = false;
+   const settleStack = () => {
+    if (settling || motionPreference.matches || !window.matchMedia('(min-width: 901px)').matches) return;
+    const headerHeight = document.querySelector('.site-header')?.getBoundingClientRect().height || 58;
+    const snapRange = Math.min(160, window.innerHeight * .18);
+    const panel = [...document.querySelectorAll('.reference-stack > .reference-card')].find(element => {
+     const gap = element.getBoundingClientRect().top - headerHeight;
+     const approaching = scrollingDown && gap > 1 && gap < snapRange;
+     const lastPanel = element.matches('.reference-stack > .reference-card:last-child');
+     const leavingSlightly = lastPanel && gap < -1 && gap > -snapRange;
+     return approaching || leavingSlightly;
+    });
+    if (!panel) return;
+    const target = window.scrollY + panel.getBoundingClientRect().top - headerHeight;
+    settling = true;
+    if (lenis) lenis.scrollTo(target, { duration: .55, onComplete: () => { settling = false; } });
+    else { window.scrollTo({ top: target, behavior: 'instant' }); settling = false; }
+   };
+   const scheduleSettle = () => {
+    const current = window.scrollY;
+    if (Math.abs(current - previousScroll) > .5) scrollingDown = current > previousScroll;
+    previousScroll = current;
+    window.clearTimeout(settleTimer);
+    if (!settling) settleTimer = window.setTimeout(settleStack,180);
+   };
+   window.addEventListener('scroll',scheduleSettle,{passive:true});
+   return () => { window.removeEventListener('scroll',scheduleSettle); window.clearTimeout(settleTimer); if(frame) cancelAnimationFrame(frame); lenis?.destroy(); revealObserver.disconnect(); videoObserver.disconnect(); motionPreference.removeEventListener('change', showAllEntrances); entranceTargets.forEach(element => { element.classList.remove('content-entrance','entrance-visible','entrance-media','entrance-action'); element.style.removeProperty('--entrance-delay'); }); };
+ }, []);
+ useEffect(() => {
+  const section = document.querySelector('#featured-properties');
+  const grid = section?.querySelector('.property-grid');
+  if (!grid) return;
+  const cards = [...grid.querySelectorAll('.property-card')];
+  const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let timer;
+  const measure = () => {
+   if (section.classList.contains('properties-deck-open')) return;
+   // Clear the initial transforms to measure the actual responsive grid slots.
+   section.classList.remove('properties-deck-ready');
+   const firstImage = cards[0].querySelector('.property-image').getBoundingClientRect();
+   const gridRect = grid.getBoundingClientRect();
+   const centerX = gridRect.left + gridRect.width / 2;
+   const centerY = firstImage.top + firstImage.height / 2;
+   cards.forEach((card,index) => {
+    const image = card.querySelector('.property-image').getBoundingClientRect();
+    card.style.setProperty('--deck-x', `${centerX - (image.left + image.width / 2) + index * 7}px`);
+    card.style.setProperty('--deck-y', `${centerY - (image.top + image.height / 2) + index * 7}px`);
+    card.style.setProperty('--deck-rotation', `${[-5,3,-2,6][index]}deg`);
+    card.style.setProperty('--deck-delay', `${index * 90}ms`);
+    card.style.setProperty('--deck-layer', String(cards.length - index));
+   });
+   section.classList.add('properties-deck-ready');
+  };
+  const observer = new IntersectionObserver(entries => {
+   if (!entries.some(entry=>entry.isIntersecting) || timer) return;
+   timer = window.setTimeout(()=>section.classList.add('properties-deck-open'),350);
+   observer.disconnect();
+  }, { threshold: .08, rootMargin:'0px 0px -8% 0px' });
+  const resize = new ResizeObserver(measure);
+  resize.observe(grid);
+  measure();
+  if (preference.matches) section.classList.add('properties-deck-open'); else observer.observe(grid);
+  const showAll = () => { if (preference.matches) { section.classList.add('properties-deck-open'); observer.disconnect(); } };
+  preference.addEventListener('change',showAll);
+  return () => { observer.disconnect(); resize.disconnect(); window.clearTimeout(timer); preference.removeEventListener('change',showAll); section.classList.remove('properties-deck-ready','properties-deck-open'); cards.forEach(card=>['--deck-x','--deck-y','--deck-rotation','--deck-delay','--deck-layer'].forEach(name=>card.style.removeProperty(name))); };
+ }, []);
+ useEffect(() => {
+  const section = document.querySelector('.restored-leadership');
+  if (!section) return;
+  const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const text = [...section.querySelectorAll('.reference-leadership-brand, .experience-eyebrow, .experience-copy-content h2, .experience-copy-content p, .experience-view-more, .experience-aside h3, .experience-aside p, .experience-figures dt, .experience-figures dd, .reference-care, .reference-project-count, .reference-social a')];
+  let leftTextIndex = 0, panelTextIndex = 0;
+  text.forEach(element => {
+   element.classList.add('leadership-text-enter');
+   const insidePanel = Boolean(element.closest('.experience-aside'));
+   const delay = insidePanel ? 950 + panelTextIndex++ * 140 : 250 + leftTextIndex++ * 180;
+   element.style.setProperty('--leadership-delay', `${delay}ms`);
+  });
+  section.classList.add('leadership-reveal-ready');
+  const observer = new IntersectionObserver(entries => {
+   if (entries.some(entry => entry.isIntersecting)) {
+    section.classList.add('leadership-revealed');
+    observer.disconnect();
+   }
+  }, { threshold: .25 });
+  const showImmediately = () => {
+   if (preference.matches) { section.classList.add('leadership-revealed'); observer.disconnect(); }
+  };
+  if (preference.matches) showImmediately(); else observer.observe(section);
+  preference.addEventListener('change', showImmediately);
+  return () => { observer.disconnect(); preference.removeEventListener('change', showImmediately); section.classList.remove('leadership-reveal-ready','leadership-revealed'); text.forEach(element=>{element.classList.remove('leadership-text-enter');element.style.removeProperty('--leadership-delay');}); };
  }, []);
  const telemetryEnabled = import.meta.env.PROD && (import.meta.env.VERCEL_DEPLOYMENT || import.meta.env.VITE_ENABLE_VERCEL_INSIGHTS === 'true');
  const [intent, setIntent] = useState('');

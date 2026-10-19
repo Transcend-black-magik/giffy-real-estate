@@ -291,3 +291,40 @@ html{scroll-padding-top:calc(var(--site-header-height) + 20px)}
 .developers-section>.section-index{text-align:left}
 .developers-section h2{margin-left:auto;margin-right:auto;text-align:center}
 .developers-section .developer-marquee{margin-left:auto;margin-right:auto}
+/* Content enters individually; only leaf content moves, preserving sticky/scroll geometry. */
+.content-entrance{opacity:0}
+.content-entrance.entrance-visible{animation:content-enter .8s cubic-bezier(.16,1,.3,1) var(--entrance-delay,0ms) both}
+.content-entrance.entrance-media.entrance-visible{animation-name:media-enter;animation-duration:1s}
+.content-entrance.entrance-action.entrance-visible{animation-name:action-enter;animation-duration:.65s}
+.content-entrance:focus-visible,.content-entrance:focus-within{opacity:1;animation:none}
+@keyframes content-enter{from{opacity:0;translate:0 28px}to{opacity:1;translate:0 0}}
+@keyframes media-enter{from{opacity:0;translate:0 32px;scale:1.025}to{opacity:1;translate:0 0;scale:1}}
+@keyframes action-enter{from{opacity:0;translate:0 15px}to{opacity:1;translate:0 0}}
+@media(max-width:700px){.content-entrance.entrance-visible{animation-duration:.65s}@keyframes content-enter{from{opacity:0;translate:0 20px}to{opacity:1;translate:0 0}}}
+@media(prefers-reduced-motion:reduce){.content-entrance,.content-entrance.entrance-visible{opacity:1;animation:none;translate:none;scale:none}}
+/* Experience reveal: portrait first, black panel second, then individual copy. */
+.reference-stack>.restored-leadership.leadership-reveal-ready{background:#fff}
+.leadership-reveal-ready:not(.leadership-revealed) .reference-portrait{translate:var(--portrait-entry-x,169.048%) 0}
+.leadership-reveal-ready:not(.leadership-revealed) .experience-aside{translate:100% 0}
+.leadership-reveal-ready .leadership-text-enter{opacity:0}
+.leadership-revealed .reference-portrait{animation:leadership-portrait-enter 1.8s cubic-bezier(.22,1,.36,1) 1s both}
+.leadership-revealed .experience-aside{animation:leadership-panel-enter 1.15s cubic-bezier(.22,1,.36,1) both}
+.leadership-revealed .leadership-text-enter{animation:leadership-copy-enter .65s cubic-bezier(.16,1,.3,1) var(--leadership-delay,1550ms) both}
+.leadership-text-enter:focus-visible{opacity:1;animation:none}
+@keyframes leadership-panel-enter{from{translate:100% 0}to{translate:0 0}}
+@keyframes leadership-portrait-enter{from{translate:var(--portrait-entry-x,169.048%) 0}to{translate:0 0}}
+@keyframes leadership-copy-enter{from{opacity:0;translate:35px 14px}to{opacity:1;translate:0 0}}
+@media(prefers-reduced-motion:reduce){.leadership-reveal-ready .reference-portrait,.leadership-reveal-ready .experience-aside,.leadership-reveal-ready .leadership-text-enter{animation:none!important;translate:none!important;opacity:1}}
+/* Featured listings open from a compact image deck into their original grid. */
+.properties-deck-ready .property-card{position:relative;transform-origin:center 40%;z-index:var(--deck-layer,1)}
+.properties-deck-ready:not(.properties-deck-open) .property-card{transform:translate(var(--deck-x),var(--deck-y)) rotate(var(--deck-rotation)) scale(.67)}
+.properties-deck-ready:not(.properties-deck-open) .property-image{box-shadow:0 18px 50px #23293628}
+.properties-deck-ready:not(.properties-deck-open) .property-meta,.properties-deck-ready:not(.properties-deck-open) .property-note{visibility:hidden}
+.properties-deck-open .property-card{animation:property-deck-spread 1.25s cubic-bezier(.22,1,.36,1) var(--deck-delay,0ms) both}
+.properties-deck-open .property-image{transition:box-shadow 1.25s ease}
+@keyframes property-deck-spread{from{transform:translate(var(--deck-x),var(--deck-y)) rotate(var(--deck-rotation)) scale(.67)}to{transform:translate(0,0) rotate(0) scale(1)}}
+@media(prefers-reduced-motion:reduce){.properties-deck-ready .property-card{animation:none!important;transform:none!important}.properties-deck-ready .property-meta,.properties-deck-ready .property-note{visibility:visible!important}}
+
+@media(max-width:900px){.restored-leadership{--portrait-entry-x:100%}}
+/* Give the final stacked panel a covered hold before the next section enters. */
+@media(min-width:901px) and (prefers-reduced-motion:no-preference){.reference-stack{padding-bottom:0}.reference-stack::after{content:"";display:block;height:0;grid-column:1}.reference-stack>.reference-card{height:calc(100dvh - var(--site-header-height));box-sizing:border-box}}
