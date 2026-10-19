@@ -22,7 +22,7 @@ const aboutStories = [
   },
   {
     title: <>Your next move, <em>made clearer.</em><br/>Thoughtful guidance for a city<br/>full of <em>possibility.</em></>,
-    description: 'From exploring off-plan opportunities to understanding a ready home’s details, our team helps you navigate Dubai property with clear information and personal support.',
+    description: 'From exploring off-plan opportunities to understanding a ready home\'s details, our team helps you navigate Dubai property with clear information and personal support.',
     image: '/images/dubai-skyline.jpg',
     alt: 'Dubai skyline at dusk, with the city illuminated',
     caption: 'A city full of possibility.'
@@ -83,6 +83,7 @@ function App() {
  const [reviewIndex, setReviewIndex] = useState(0);
  const [aboutIndex, setAboutIndex] = useState(0);
  const [aboutLeaving, setAboutLeaving] = useState(false);
+ const [aboutArriving, setAboutArriving] = useState(false);
  const aboutTimer = useRef(null);
  const aboutStory = aboutStories[aboutIndex];
  const changeAboutStory = direction => {
@@ -92,6 +93,8 @@ function App() {
    aboutTimer.current = window.setTimeout(() => {
      setAboutIndex(index => (index + direction + aboutStories.length) % aboutStories.length);
      setAboutLeaving(false);
+     setAboutArriving(true);
+     window.setTimeout(() => setAboutArriving(false), 650);
    }, 360);
  };
  useEffect(() => () => window.clearTimeout(aboutTimer.current), []);
@@ -137,11 +140,15 @@ function App() {
   <section className="developers-section reveal" id="developers" aria-labelledby="developers-title">
    <div className="section-index reveal-item" style={{'--reveal-delay':'0ms'}}>OUR NETWORK / YOUR ADVANTAGE</div>
    <h2 id="developers-title" className="reveal-item" style={{'--reveal-delay':'100ms'}}>Trusted Partner of the Most Prominent Developers</h2>
-   <div className="developer-row" tabIndex="0" role="region" aria-label="Developer partners, horizontally scrollable on small screens">
-    {[['emaar','EMAAR'],['damac','DAMAC'],['binghatti','Binghatti'],['imtiaz','Imtiaz Developments'],['acube','Acube Developments'],['object-one','Object 1']].map(([slug,name],i)=><div className="developer-logo reveal-item" style={{'--reveal-delay':`${180+i*70}ms`}} key={slug}><img src={`/images/developers/${slug}.png`} alt={name} loading="lazy" width="220" height="100"/></div>)}
+   <div className="developer-marquee" role="region" aria-label="Our developer partners">
+    <div className="developer-track">
+     {[0,1].map(copy=><div className="developer-group" key={copy} aria-hidden={copy===1}>
+      {[['emaar','EMAAR'],['damac','DAMAC'],['binghatti','Binghatti'],['imtiaz','Imtiaz Developments'],['acube','Acube Developments'],['object-one','Object 1']].map(([slug,name],i)=><div className="developer-logo reveal-item" style={{'--reveal-delay':`${180+i*70}ms`}} key={slug}><img src={`/images/developers/${slug}.png`} alt={copy===0?name:''} loading="lazy" width="220" height="100"/></div>)}
+     </div>)}
+    </div>
    </div>
   </section>
-  <section className={`about-section reveal${aboutLeaving?' about-leaving':''}`} id="about-giffy" aria-labelledby="about-title">
+  <section className={`about-section reveal${aboutLeaving?' about-leaving':''}${aboutArriving?' about-arriving':''}`} id="about-giffy" aria-labelledby="about-title">
    <div className="about-section-label reveal-item" style={{'--reveal-delay':'0ms'}}><span>01</span> ABOUT GIFFY</div>
    <h2 id="about-title" key={`title-${aboutIndex}`} className="about-statement reveal-item about-slide" style={{'--reveal-delay':'120ms'}}>{aboutStory.title}</h2>
    <div className="about-seal reveal-item" style={{'--reveal-delay':'240ms'}} aria-hidden="true"><span>GIFFY REAL ESTATE</span><img src="/images/giffy-logo.png" alt="" width="2330" height="807"/><span>DUBAI / PERSONAL GUIDANCE</span></div>
