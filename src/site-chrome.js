@@ -1,6 +1,6 @@
 import { navigationMenus } from './navigation-menus.js';
 export function siteHeaderMarkup() {
- const links = [['Home','/'],['Projects','/projects'],['Sell','mailto:info@giffyrealestate.com?subject=Sell%20a%20property'],['Rent','mailto:info@giffyrealestate.com?subject=Rent%20a%20property'],['Services','/services'],['About Giffy','/about']];
+ const links = [['Home','/'],['Projects','/projects'],['Services','/services'],['About Giffy','/about']];
  const navigation = links.map(([label,href])=>navigationMenus[label] ? `<details class="projects-nav-menu projects-native-menu"><summary>${label}<span class="desktop-menu-indicator" aria-hidden="true"></span><span class="mobile-menu-chevron" aria-hidden="true"></span></summary><div class="projects-nav-dropdown">${navigationMenus[label].map(item=>`<a href="${item.href}">${item.label}</a>`).join('')}</div></details>` : `<a href="${href}">${label}</a>`).join('');
  return `<header class="site-header error-site-header"><a class="brand" href="/" aria-label="Giffy Real Estate home"><img src="/images/giffy-logo.png" alt="Giffy Real Estate" width="2330" height="807"></a><nav class="desktop-nav" aria-label="Main navigation">${navigation}</nav><a class="button header-contact" href="/contact">Contact us</a><details class="error-mobile-menu"><summary aria-label="Open navigation">☰</summary><nav aria-label="Mobile navigation">${navigation}</nav></details></header>`;
 }

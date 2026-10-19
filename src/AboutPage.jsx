@@ -17,10 +17,6 @@ export default function AboutGiffyPage() {
   <div dangerouslySetInnerHTML={{__html:siteHeaderMarkup()}}/>
   <main className="about-reference-page">
    <article className="about-editorial">
-    <header className="about-editorial-header" data-about-enter>
-     <a className="about-editorial-mark" href="/" aria-label="Giffy Real Estate home"><img src="/images/giffy-logo.png" alt="Giffy Real Estate"/><span>REAL ESTATE / DUBAI</span></a>
-     <nav aria-label="About page navigation"><a href="/projects">Projects</a><a href="/contact" data-book-consultation data-consultation-purpose="Speak to our team">Contact</a><a className="about-editorial-cta" href="/contact?consultation=1" data-book-consultation data-consultation-purpose="Book a consultation">Talk to Giffy <ArrowUpRight size={13}/></a></nav>
-    </header>
     <aside className="about-editorial-index" aria-label="About page sections">
      <span>GIFFY REAL ESTATE</span><b>01 / 02</b><a href="#about-story" aria-label="Previous section"><ChevronUp size={13}/></a><a href="#about-approach" aria-label="Next section"><ChevronDown size={13}/></a>
     </aside>
