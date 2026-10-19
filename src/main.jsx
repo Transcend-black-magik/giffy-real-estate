@@ -12,6 +12,41 @@ const reviews = [
   { name: 'Fatima Alanda', initial: 'F', color: '#ac45b6', text: 'The CEO herself is one of the most humble and kindest people I have ever met. She takes care of you as she would of herself. I can only recommend!' },
   { name: 'Amazing raheema', initial: 'A', color: '#246b68', text: 'The absolute best. Service is super top notch. If you are looking for a legit real estate agency in the UAE to handle your property purchases and still give after sales services, it is definitely Giffy Real Estate.' }
 ];
+const aboutStories = [
+  {
+    title: <>We see <em>possibility,</em> not just property.<br/>Our work is shaped by local insight<br/>and a <em>considered approach</em> to your next chapter.</>,
+    description: 'Behind every move is a personal story. We bring Dubai market knowledge and thoughtful, individual guidance to buying, selling and investing, so your next decision feels clear, considered and entirely yours.',
+    image: '/images/about-residence.jpg',
+    alt: 'A light-filled contemporary residence with natural materials',
+    caption: 'A considered way to live.'
+  },
+  {
+    title: <>Your next move, <em>made clearer.</em><br/>Thoughtful guidance for a city<br/>full of <em>possibility.</em></>,
+    description: 'From exploring off-plan opportunities to understanding a ready home’s details, our team helps you navigate Dubai property with clear information and personal support.',
+    image: '/images/dubai-skyline.jpg',
+    alt: 'Dubai skyline at dusk, with the city illuminated',
+    caption: 'A city full of possibility.'
+  }
+];
+function CountUp({ from, to, label }) {
+  const [value, setValue] = useState(from);
+  useEffect(() => {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) { setValue(to); return; }
+    let frame;
+    const start = performance.now() + 160;
+    const duration = 950;
+    const step = now => {
+      const progress = Math.min(1, Math.max(0, (now - start) / duration));
+      const eased = 1 - Math.pow(1 - progress, 4);
+      setValue(Math.round(from + (to - from) * eased));
+      if (progress < 1) frame = requestAnimationFrame(step);
+    };
+    frame = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frame);
+  }, [from, to]);
+  return <><strong aria-label={`${to}+ ${label}`}>{value}+</strong><span>{label}</span></>;
+}
 function Brand() {
  return <a className="brand" href="#home" aria-label="Giffy Real Estate home"><img src="/images/giffy-logo.png" alt="Giffy Real Estate" width="2330" height="807"/></a>;
 }
@@ -46,6 +81,20 @@ function App() {
  const telemetryEnabled = import.meta.env.PROD && (import.meta.env.VERCEL_DEPLOYMENT || import.meta.env.VITE_ENABLE_VERCEL_INSIGHTS === 'true');
  const [intent, setIntent] = useState('');
  const [reviewIndex, setReviewIndex] = useState(0);
+ const [aboutIndex, setAboutIndex] = useState(0);
+ const [aboutLeaving, setAboutLeaving] = useState(false);
+ const aboutTimer = useRef(null);
+ const aboutStory = aboutStories[aboutIndex];
+ const changeAboutStory = direction => {
+   if (aboutLeaving) return;
+   setAboutLeaving(true);
+   window.clearTimeout(aboutTimer.current);
+   aboutTimer.current = window.setTimeout(() => {
+     setAboutIndex(index => (index + direction + aboutStories.length) % aboutStories.length);
+     setAboutLeaving(false);
+   }, 360);
+ };
+ useEffect(() => () => window.clearTimeout(aboutTimer.current), []);
  const contactDialog = useRef(null);
  const reviewDialog = useRef(null);
  const inquire = purpose => { setMenuOpen(false); setIntent(purpose); contactDialog.current.showModal(); };
@@ -83,7 +132,7 @@ function App() {
      </figure>
     </div>
    </section>
-   <div className="hero-footer">     <div className="stats" aria-label="About Giffy Real Estate">{[{value:'400+',label:'Happy clients'},{value:'10+',label:'Years of experience'},{value:'Dubai',label:'Local market expertise'}].map((stat,i)=><div className="stat enter" style={{'--delay':`${1530+i*120}ms`}} key={stat.label}><strong>{stat.value}</strong><span>{stat.label}</span></div>)}</div><p className="footer-note enter" style={{'--delay':'1800ms'}}>Personal guidance.<br/>A considered approach to property.</p></div>
+   <div className="hero-footer">     <div className="stats" aria-label="About Giffy Real Estate">{[{from:40,to:500,label:'Happy Clients'},{from:20,to:250,label:'Exclusive Listings'},{from:0,to:15,label:'Developer Partnerships'}].map((stat,i)=><div className="stat enter" style={{'--delay':`${1530+i*120}ms`}} key={stat.label}><CountUp {...stat}/></div>)}</div><p className="footer-note enter" style={{'--delay':'1800ms'}}>Personal guidance.<br/>A considered approach to property.</p></div>
   </main></div>
   <section className="developers-section reveal" id="developers" aria-labelledby="developers-title">
    <div className="section-index reveal-item" style={{'--reveal-delay':'0ms'}}>OUR NETWORK / YOUR ADVANTAGE</div>
@@ -92,15 +141,15 @@ function App() {
     {[['emaar','EMAAR'],['damac','DAMAC'],['binghatti','Binghatti'],['imtiaz','Imtiaz Developments'],['acube','Acube Developments'],['object-one','Object 1']].map(([slug,name],i)=><div className="developer-logo reveal-item" style={{'--reveal-delay':`${180+i*70}ms`}} key={slug}><img src={`/images/developers/${slug}.png`} alt={name} loading="lazy" width="220" height="100"/></div>)}
    </div>
   </section>
-  <section className="about-section reveal" id="about-giffy" aria-labelledby="about-title">
+  <section className={`about-section reveal${aboutLeaving?' about-leaving':''}`} id="about-giffy" aria-labelledby="about-title">
    <div className="about-section-label reveal-item" style={{'--reveal-delay':'0ms'}}><span>01</span> ABOUT GIFFY</div>
-   <h2 id="about-title" className="about-statement reveal-item" style={{'--reveal-delay':'120ms'}}>We see <em>possibility,</em> not just property.<br/>Our work is shaped by local insight<br/>and a <em>considered approach</em> to your next chapter.</h2>
+   <h2 id="about-title" key={`title-${aboutIndex}`} className="about-statement reveal-item about-slide" style={{'--reveal-delay':'120ms'}}>{aboutStory.title}</h2>
    <div className="about-seal reveal-item" style={{'--reveal-delay':'240ms'}} aria-hidden="true"><span>GIFFY REAL ESTATE</span><img src="/images/giffy-logo.png" alt="" width="2330" height="807"/><span>DUBAI / PERSONAL GUIDANCE</span></div>
-   <div className="about-story reveal-item" style={{'--reveal-delay':'340ms'}}><span className="about-line" aria-hidden="true"/><p>Behind every move is a personal story. We bring Dubai market knowledge and thoughtful, individual guidance to buying, selling and investing, so your next decision feels clear, considered and entirely yours.</p><button className="text-link" onClick={()=>inquire('Meet Giffy Real Estate')}>Get to know Giffy <ArrowUpRight size={14}/></button></div>
+   <div key={`story-${aboutIndex}`} className="about-story reveal-item about-slide" style={{'--reveal-delay':'340ms'}}><span className="about-line" aria-hidden="true"/><p>{aboutStory.description}</p><button className="text-link" onClick={()=>inquire('Meet Giffy Real Estate')}>Get to know Giffy <ArrowUpRight size={14}/></button></div>
    <span className="about-asterisks reveal-item" style={{'--reveal-delay':'420ms'}} aria-hidden="true">&#10035; &#10035; &#10035;</span>
-   <figure className="about-photo reveal-item" style={{'--reveal-delay':'480ms'}}><img src="/images/about-residence.jpg" alt="A light-filled contemporary residence with natural materials" loading="lazy" width="900" height="1100"/><figcaption><span>A considered way to live.</span><span>Dubai / Giffy</span></figcaption></figure>
-   <a className="about-top-link reveal-item" style={{'--reveal-delay':'550ms'}} href="#home" aria-label="Back to the hero"><ArrowUpRight size={18}/></a>
-   <a className="about-next-link reveal-item" style={{'--reveal-delay':'400ms'}} href="mailto:info@giffyrealestate.com" aria-label="Start a conversation with Giffy"><ArrowUpRight size={18}/></a>
+   <figure key={`photo-${aboutIndex}`} className="about-photo reveal-item about-slide" style={{'--reveal-delay':'480ms'}}><img src={aboutStory.image} alt={aboutStory.alt} loading="lazy" width="900" height="1100"/><figcaption><span>{aboutStory.caption}</span><span>Dubai / Giffy</span></figcaption></figure>
+   <button className="about-top-link reveal-item" style={{'--reveal-delay':'550ms'}} onClick={()=>changeAboutStory(-1)} aria-label="Previous Giffy story"><ChevronLeft size={18}/></button>
+   <button className="about-next-link reveal-item" style={{'--reveal-delay':'400ms'}} onClick={()=>changeAboutStory(1)} aria-label="Next Giffy story"><ChevronRight size={18}/></button>
   </section>
   {telemetryEnabled && <><Analytics/><SpeedInsights/></>}
   <dialog ref={contactDialog} className="contact-dialog" onClick={e=>{if(e.target===contactDialog.current)contactDialog.current.close()}}><div className="dialog-content"><button className="dialog-close" aria-label="Close dialog" onClick={()=>contactDialog.current.close()}><X/></button><span className="eyebrow">YOUR NEXT CHAPTER</span><h2>{intent}</h2><p>Tell our Dubai team what you have in mind. We’ll help you explore the next step.</p><a className="button dialog-action" href={`mailto:info@giffyrealestate.com?subject=${encodeURIComponent(intent)}`}>Email our team <ArrowUpRight size={17}/></a><a className="whatsapp" href="https://wa.me/971522656819" target="_blank" rel="noreferrer">Chat on WhatsApp <ArrowUpRight size={16}/></a><a className="phone" href="tel:+97145703395">+971 4 570 3395</a></div></dialog>
