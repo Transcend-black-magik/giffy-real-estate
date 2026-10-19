@@ -104,6 +104,11 @@ function App() {
      const tick = time => { lenis.raf(time); frame = requestAnimationFrame(tick); };
      frame = requestAnimationFrame(tick);
    }
+   const stopPageScroll = () => lenis?.stop();
+   const resumePageScroll = () => lenis?.start();
+   window.addEventListener('giffy:scroll-lock', stopPageScroll);
+   window.addEventListener('giffy:scroll-unlock', resumePageScroll);
+   if (document.querySelector('.consultation-dialog[open]')) stopPageScroll();
    // Observe the content itself, including cards entering horizontally and pinned panels.
    const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
    const entranceRoots = document.querySelectorAll('#developers, #featured-properties, #services, .contact-invitation, .classic-footer');
@@ -171,7 +176,7 @@ function App() {
     if (!settling) settleTimer = window.setTimeout(settleStack,180);
    };
    window.addEventListener('scroll',scheduleSettle,{passive:true});
-   return () => { window.removeEventListener('scroll',scheduleSettle); window.clearTimeout(settleTimer); if(frame) cancelAnimationFrame(frame); lenis?.destroy(); revealObserver.disconnect(); videoObserver.disconnect(); motionPreference.removeEventListener('change', showAllEntrances); entranceTargets.forEach(element => { element.classList.remove('content-entrance','entrance-visible','entrance-media','entrance-action'); element.style.removeProperty('--entrance-delay'); }); };
+   return () => { window.removeEventListener('giffy:scroll-lock',stopPageScroll); window.removeEventListener('giffy:scroll-unlock',resumePageScroll); window.removeEventListener('scroll',scheduleSettle); window.clearTimeout(settleTimer); if(frame) cancelAnimationFrame(frame); lenis?.destroy(); revealObserver.disconnect(); videoObserver.disconnect(); motionPreference.removeEventListener('change', showAllEntrances); entranceTargets.forEach(element => { element.classList.remove('content-entrance','entrance-visible','entrance-media','entrance-action'); element.style.removeProperty('--entrance-delay'); }); };
  }, []);
  useEffect(() => {
   const section = document.querySelector('#featured-properties');
