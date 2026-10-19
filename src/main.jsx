@@ -5,6 +5,10 @@ import Lenis from 'lenis';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import './styles.css';
+import { siteFooterMarkup } from './site-chrome.js';
+import { SiteErrorBoundary } from './ErrorScreens.jsx';
+import PageRouter from './PageRouter.jsx';
+import ProjectsPage, { ProjectsMenu } from './ProjectsPage.jsx';
 
 const navigation = ['Home', 'Projects', 'Sell', 'Rent', 'Services', 'About Giffy'];
 const reviews = [
@@ -38,7 +42,7 @@ function CountUp({ from, to, label }) {
   return <><strong aria-label={`${to}+ ${label}`}>{value}+</strong><span>{label}</span></>;
 }
 function Brand() {
- return <a className="brand" href="#home" aria-label="Giffy Real Estate home"><img src="/images/giffy-logo.png" alt="Giffy Real Estate" width="2330" height="807"/></a>;
+ return <a className="brand" href="/" aria-label="Giffy Real Estate home"><img src="/images/giffy-logo.png" alt="Giffy Real Estate" width="2330" height="807"/></a>;
 }
 function Stars() { return <span className="stars" aria-label="5 out of 5 stars">{[0,1,2,3,4].map(i=><Star key={i} size={15} fill="currentColor" strokeWidth={0}/>)}</span>; }
 const serviceCards = [
@@ -77,22 +81,10 @@ function ServicesScroll({ onEnquire }) {
  return <section ref={sectionRef} className="services-scroll-section" id="services" aria-labelledby="services-scroll-title"><div className="services-scroll-pin"><header className="services-scroll-heading"><span>OUR SERVICES</span><h2 id="services-scroll-title">Expert support.<br/>Every step of the way.</h2><p>Get expert support for buying, selling, investing, and managing properties across Dubai. Giffy Real Estate LLC provides end-to-end solutions tailored to homeowners, investors, and international buyers.</p></header><div className="services-scroll-window"><div className="services-scroll-track" ref={trackRef}>{serviceCards.map((service,index)=><article className="services-scroll-card" key={service.title}><span className="services-card-number">{String(index+1).padStart(2,'0')}</span><div><h3>{service.title}</h3><p>{service.text}</p><button onClick={()=>service.title === 'Property Management' ? document.getElementById('property-management')?.scrollIntoView({behavior:'smooth'}) : onEnquire(service.title)}>{service.title === 'Property Management' ? 'Explore management' : 'Talk to an advisor'} <ArrowUpRight size={14}/></button></div></article>)}</div></div><span className="services-scroll-note">SCROLL TO EXPLORE ALL SERVICES <span aria-hidden="true">→</span></span></div></section>;
 }
 function SiteFooter({ onContact }) {
- return <footer className="classic-footer">
-  <div className="classic-footer-inner">
-   <div className="classic-footer-partners" aria-label="Our developer partners">{[['emaar','EMAAR'],['damac','DAMAC'],['binghatti','Binghatti'],['imtiaz','Imtiaz Developments'],['object-one','Object 1']].map(([slug,name])=><img key={slug} src={`/images/developers/${slug}.png`} alt={name} loading="lazy"/>)}</div>
-   <div className="classic-footer-columns">
-    <div><h2>Contact Info</h2><address>Prime Tower, Business Bay,<br/>Dubai, United Arab Emirates</address><p>Phone: <a href="tel:+97145703395">+971 4 570 3395</a></p><p>Email: <a href="mailto:info@giffyrealestate.com">info@giffyrealestate.com</a></p></div>
-    <nav aria-label="Footer navigation"><h2>Explore Giffy</h2><ul><li><a href="#home">Home</a></li><li><a href="#featured-properties">Featured Properties</a></li><li><a href="#services">Our Services</a></li><li><a href="#property-management">Property Management</a></li><li><a href="#our-experience">Our Experience</a></li><li><button onClick={()=>onContact('Speak to an advisor')}>Speak to an Advisor</button></li></ul></nav>
-    <div className="footer-advisor"><h2>Your Next Move</h2><p>Tell us what you are looking for. We will help you explore the right opportunities in Dubai.</p><button className="classic-footer-signup" onClick={()=>onContact('Request a property consultation')}>Book a consultation <ArrowUpRight size={14}/></button></div>
-    <nav aria-label="Giffy stories and insights"><h2>Stories &amp; Insights</h2><ul><li><a href="#featured-properties">Featured Properties in Dubai</a></li><li><a href="#property-management">Hassle-Free Property Management</a></li><li><a href="#our-experience">A Decade of Real Estate Experience</a></li></ul></nav>
-   </div>
-   <div className="classic-footer-bottom"><span>© {new Date().getFullYear()} Giffy Real Estate LLC. All rights reserved.</span><span>Thoughtful guidance. Exceptional homes.</span></div>
-  </div>
-  <svg className="classic-footer-skyline" viewBox="0 0 1680 230" preserveAspectRatio="none" aria-hidden="true" focusable="false">{[0,1,2].map(layer=><g key={layer} fill={['#d9dce0','#c6cbd0','#afb7bf'][layer]}>{Array.from({length:58},(_,i)=>{const x=i*30-15+layer*9;const h=22+((i*47+layer*29)%115);const y=230-h-layer*4;return <g key={i}><path d={`M${x} 230 V${y} l12 -${i%4===0?12:0} h14 v${230-y+12}Z`}/>{i%7===0&&<path d={`M${x+11} ${y}v-24h3v24Z`}/>}</g>;})}<path d="M820 230V78h12V50h8V20h3V0h3v20h3v30h8v28h12v152Z"/>{Array.from({length:45},(_,i)=><rect key={i} x={i*39+layer*5} y={190+(i%3)*12} width="3" height="7" fill="#f5f5f5" opacity=".9"/>)}</g>)}</svg>
-  <a className="classic-footer-top" href="#home" aria-label="Back to top">⌃</a>
- </footer>;
+ return <div className="site-footer-host" onClick={event=>{const link=event.target.closest('[data-footer-contact]');if(link){event.preventDefault();onContact(link.dataset.footerContact);}}} dangerouslySetInnerHTML={{__html:siteFooterMarkup()}}/>;
 }
 function App() {
+ useEffect(()=>{document.title='Giffy Real Estate — A finer way to live';},[]);
  const [menuOpen, setMenuOpen] = useState(false);
  const [contactOpen, setContactOpen] = useState(false);
  const [contactMounted, setContactMounted] = useState(false);
@@ -113,7 +105,7 @@ function App() {
    }
    // Observe the content itself, including cards entering horizontally and pinned panels.
    const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
-   const entranceRoots = document.querySelectorAll('#developers, #featured-properties, #services, #property-management, .contact-invitation, .classic-footer');
+   const entranceRoots = document.querySelectorAll('#developers, #featured-properties, #services, .contact-invitation, .classic-footer');
    const entranceTargets = [];
    const revealObserver = new IntersectionObserver(entries => {
     let batchIndex = 0;
@@ -154,7 +146,7 @@ function App() {
    // Gently finish a nearly complete card transition without snapping the whole page.
    let settleTimer, previousScroll = window.scrollY, scrollingDown = false, settling = false;
    const settleStack = () => {
-    if (settling || motionPreference.matches || !window.matchMedia('(min-width: 901px)').matches) return;
+    if (settling || motionPreference.matches || window.innerWidth < 320) return;
     const headerHeight = document.querySelector('.site-header')?.getBoundingClientRect().height || 58;
     const snapRange = Math.min(160, window.innerHeight * .18);
     const panel = [...document.querySelectorAll('.reference-stack > .reference-card')].find(element => {
@@ -205,64 +197,111 @@ function App() {
    });
    section.classList.add('properties-deck-ready');
   };
-  const observer = new IntersectionObserver(entries => {
-   if (!entries.some(entry=>entry.isIntersecting) || timer) return;
-   timer = window.setTimeout(()=>section.classList.add('properties-deck-open'),350);
-   observer.disconnect();
-  }, { threshold: .08, rootMargin:'0px 0px -8% 0px' });
+  const stackFullyVisible = () => {
+   const header = document.querySelector('.site-header')?.getBoundingClientRect().height || 58;
+   return cards.every(card=>{const bounds=card.querySelector('.property-image').getBoundingClientRect();return bounds.top>=header+10 && bounds.bottom<=window.innerHeight-12;});
+  };
+  const revealWhenReady = () => {
+   if(section.classList.contains('properties-deck-open')) return;
+   if(!stackFullyVisible()){window.clearTimeout(timer);timer=null;return;}
+   if(timer) return;
+   timer=window.setTimeout(()=>{if(stackFullyVisible()){section.classList.add('properties-deck-open');observer.disconnect();}timer=null;},350);
+  };
+  const observer = new IntersectionObserver(revealWhenReady, { threshold: 0 });
   const resize = new ResizeObserver(measure);
   resize.observe(grid);
   measure();
+  window.addEventListener('scroll',revealWhenReady,{passive:true});
+  window.addEventListener('resize',revealWhenReady);
   if (preference.matches) section.classList.add('properties-deck-open'); else observer.observe(grid);
   const showAll = () => { if (preference.matches) { section.classList.add('properties-deck-open'); observer.disconnect(); } };
   preference.addEventListener('change',showAll);
-  return () => { observer.disconnect(); resize.disconnect(); window.clearTimeout(timer); preference.removeEventListener('change',showAll); section.classList.remove('properties-deck-ready','properties-deck-open'); cards.forEach(card=>['--deck-x','--deck-y','--deck-rotation','--deck-delay','--deck-layer'].forEach(name=>card.style.removeProperty(name))); };
+  return () => { observer.disconnect(); resize.disconnect(); window.clearTimeout(timer);window.removeEventListener('scroll',revealWhenReady);window.removeEventListener('resize',revealWhenReady); preference.removeEventListener('change',showAll); section.classList.remove('properties-deck-ready','properties-deck-open'); cards.forEach(card=>['--deck-x','--deck-y','--deck-rotation','--deck-delay','--deck-layer'].forEach(name=>card.style.removeProperty(name))); };
  }, []);
  useEffect(() => {
-  const section = document.querySelector('.restored-leadership');
-  if (!section) return;
+  const management = document.querySelector('#property-management');
+  const leadership = document.querySelector('.restored-leadership');
+  if (!management || !leadership) return;
   const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const text = [...section.querySelectorAll('.reference-leadership-brand, .experience-eyebrow, .experience-copy-content h2, .experience-copy-content p, .experience-view-more, .experience-aside h3, .experience-aside p, .experience-figures dt, .experience-figures dd, .reference-care, .reference-project-count, .reference-social a')];
-  let leftTextIndex = 0, panelTextIndex = 0;
-  text.forEach(element => {
-   element.classList.add('leadership-text-enter');
-   const insidePanel = Boolean(element.closest('.experience-aside'));
-   const delay = insidePanel ? 950 + panelTextIndex++ * 140 : 250 + leftTextIndex++ * 180;
-   element.style.setProperty('--leadership-delay', `${delay}ms`);
-  });
-  section.classList.add('leadership-reveal-ready');
-  const observer = new IntersectionObserver(entries => {
-   if (entries.some(entry => entry.isIntersecting)) {
-    section.classList.add('leadership-revealed');
-    observer.disconnect();
-   }
-  }, { threshold: .25 });
-  const showImmediately = () => {
-   if (preference.matches) { section.classList.add('leadership-revealed'); observer.disconnect(); }
+  const desktop = window.matchMedia('(min-width: 901px)');
+  const scenes = [{element:management,animations:[],active:false},{element:leadership,animations:[],active:false}];
+  let frame = 0;
+  const animate = (scene,element,keyframes,duration,delay=0) => {
+   if (!element) return;
+   const animation = element.animate(keyframes,{duration,delay,fill:'both',easing:'cubic-bezier(.22,1,.36,1)'});
+   animation.pause();
+   animation.currentTime = 0;
+   scene.animations.push(animation);
   };
-  if (preference.matches) showImmediately(); else observer.observe(section);
-  preference.addEventListener('change', showImmediately);
-  return () => { observer.disconnect(); preference.removeEventListener('change', showImmediately); section.classList.remove('leadership-reveal-ready','leadership-revealed'); text.forEach(element=>{element.classList.remove('leadership-text-enter');element.style.removeProperty('--leadership-delay');}); };
+  const build = () => {
+   scenes.forEach(scene=>{scene.animations.forEach(animation=>animation.cancel());scene.animations=[];scene.active=false;});
+   leadership.classList.remove('leadership-reveal-ready','leadership-revealed');
+   leadership.classList.toggle('leadership-motion-ready',!preference.matches);
+   if (preference.matches) return;
+   animate(scenes[0],management.querySelector('.craft-body figure img'),[{translate:'-105% 0',opacity:0},{translate:'0 0',opacity:1}],1500,100);
+   management.querySelectorAll('.craft-ribbon, .craft-eyebrow, .craft-heading h2, .craft-heading p, .craft-heading button, .craft-body figcaption span, .craft-details h3, .craft-details p, .craft-details button').forEach((element,index)=>{
+    animate(scenes[0],element,[{opacity:0,translate:'0 20px'},{opacity:1,translate:'0 0'}],650,160+index*105);
+   });
+   animate(scenes[1],leadership.querySelector('.experience-aside'),[{translate:'100% 0'},{translate:'0 0'}],1150);
+   animate(scenes[1],leadership.querySelector('.reference-portrait'),[{translate:desktop.matches?'169.048% 0':'100% 0'},{translate:'0 0'}],1800,1000);
+   let leftIndex=0,panelIndex=0;
+   leadership.querySelectorAll('.reference-leadership-brand, .experience-eyebrow, .experience-copy-content h2, .experience-copy-content p, .experience-view-more, .experience-aside h3, .experience-aside p, .experience-figures dt, .experience-figures dd, .reference-care, .reference-project-count, .reference-social a').forEach(element=>{
+    const delay=element.closest('.experience-aside')?950+panelIndex++*140:250+leftIndex++*180;
+    animate(scenes[1],element,[{opacity:0,translate:'35px 14px'},{opacity:1,translate:'0 0'}],650,delay);
+   });
+   update();
+  };
+  const setActive = (scene,active) => {
+   if(scene.active===active) return;
+   scene.active=active;
+   scene.animations.forEach(animation=>{
+    animation.playbackRate=active?1:-1;
+    animation.play();
+   });
+  };
+  const update = () => {
+   frame=0;
+   if(preference.matches) return;
+   const header=document.querySelector('.site-header').getBoundingClientRect().height;
+   const first=management.getBoundingClientRect(), next=leadership.getBoundingClientRect();
+   const available=window.innerHeight-header;
+   const covered=next.top<header+available*.45;
+   setActive(scenes[0],first.top<window.innerHeight*.8 && first.bottom>header && !covered);
+   setActive(scenes[1],next.top<window.innerHeight*.72 && next.bottom>header+available*.2);
+  };
+  const schedule = () => { if(!frame) frame=requestAnimationFrame(update); };
+  window.addEventListener('scroll',schedule,{passive:true});
+  window.addEventListener('resize',schedule);
+  preference.addEventListener('change',build);
+  desktop.addEventListener('change',build);
+  build();
+  return () => {cancelAnimationFrame(frame);window.removeEventListener('scroll',schedule);window.removeEventListener('resize',schedule);preference.removeEventListener('change',build);desktop.removeEventListener('change',build);scenes.forEach(scene=>scene.animations.forEach(animation=>animation.cancel()));leadership.classList.remove('leadership-motion-ready');};
  }, []);
  const telemetryEnabled = import.meta.env.PROD && (import.meta.env.VERCEL_DEPLOYMENT || import.meta.env.VITE_ENABLE_VERCEL_INSIGHTS === 'true');
  const [intent, setIntent] = useState('');
  const [reviewIndex, setReviewIndex] = useState(0);
  const reviewDialog = useRef(null);
  const inquire = purpose => { setMenuOpen(false); setIntent(purpose); window.clearTimeout(contactCloseTimer.current); setContactMounted(true); requestAnimationFrame(() => setContactOpen(true)); };
+ useEffect(()=>{
+  const open=()=>inquire('Speak to an advisor');
+  if(window.location.pathname.replace(/\/+$/,'')==='/contact') open();
+  window.addEventListener('giffy:contact',open);
+  return ()=>window.removeEventListener('giffy:contact',open);
+ }, []);
  const closeContact = () => { setContactOpen(false); window.clearTimeout(contactCloseTimer.current); contactCloseTimer.current = window.setTimeout(() => setContactMounted(false), 720); };
  useEffect(() => { if (!contactMounted) return; const handleEscape = event => { if (event.key === 'Escape') { setContactOpen(false); window.clearTimeout(contactCloseTimer.current); contactCloseTimer.current = window.setTimeout(() => setContactMounted(false), 720); } }; window.addEventListener('keydown', handleEscape); return () => window.removeEventListener('keydown', handleEscape); }, [contactMounted]);
- const navigationTarget = label => ({ Home:'#home', Projects:'#featured-properties', Services:'#services', 'About Giffy':'#our-experience' }[label] || '#home');
+ const navigationTarget = label => ({ Home:'/', Projects:'/projects', Services:'/services', 'About Giffy':'/about' }[label] || '/contact');
  const navigate = (e, label) => { setMenuOpen(false); if (label === 'Sell' || label === 'Rent') { e.preventDefault(); inquire(`${label} a property in Dubai`); } };
  const review = reviews[reviewIndex];
  return <>
   <div className={`page-transition-view${contactOpen?' page-view-away':''}`} aria-hidden={contactOpen} inert={contactOpen}><div className="page-frame"><main className="hero-shell" id="home">
    <header className="site-header">
     <div className="enter header-brand" style={{'--delay':'40ms'}}><Brand/></div>
-    <nav className="desktop-nav" aria-label="Main navigation">{navigation.map((label,i)=><a className="enter" style={{'--delay':`${110+i*55}ms`}} href={navigationTarget(label)} key={label} onClick={e=>navigate(e,label)}>{label}</a>)}</nav>
+    <nav className="desktop-nav" aria-label="Main navigation">{navigation.map((label,i)=>label==='Projects'?<ProjectsMenu key={label}/>:<a className="enter" style={{'--delay':`${110+i*55}ms`}} href={navigationTarget(label)} key={label} onClick={e=>navigate(e,label)}>{label}</a>)}</nav>
     <button className="button header-contact enter" style={{'--delay':'460ms'}} onClick={()=>inquire('Contact Giffy')}>Contact us</button>
     <button className="menu-toggle enter" style={{'--delay':'460ms'}} aria-label={menuOpen?'Close menu':'Open menu'} aria-expanded={menuOpen} aria-controls="mobile-navigation" onClick={()=>setMenuOpen(!menuOpen)}>{menuOpen?<X/>:<Menu/>}</button>
    </header>
-   {menuOpen&&<nav className="mobile-navigation" id="mobile-navigation" aria-label="Mobile navigation">{navigation.map(label=><a href={navigationTarget(label)} key={label} onClick={e=>navigate(e,label)}>{label}<ArrowUpRight size={18}/></a>)}</nav>}
+   {menuOpen&&<nav className="mobile-navigation" id="mobile-navigation" aria-label="Mobile navigation">{navigation.map(label=>label==='Projects'?<React.Fragment key={label}><a href="/projects">All Projects <ArrowUpRight size={18}/></a><a href="/projects/developers">By developers <ArrowUpRight size={18}/></a></React.Fragment>:<a href={navigationTarget(label)} key={label} onClick={e=>navigate(e,label)}>{label}<ArrowUpRight size={18}/></a>)}</nav>}
    <section className="hero-body" aria-labelledby="hero-title">
     <div className="hero-copy">
      <p className="hero-eyebrow enter" style={{'--delay':'500ms'}}>GIFFY REAL ESTATE <span aria-hidden="true">/</span> DUBAI</p>
@@ -304,7 +343,7 @@ function App() {
   <section className="properties-section reveal" id="featured-properties" aria-labelledby="properties-title">
    <div className="properties-heading">
     <div><span className="section-index">FEATURED PROPERTIES / DUBAI</span><h2 id="properties-title">Exceptional properties.<br/>Considered choices.</h2></div>
-    <div className="properties-intro"><p>Discover high-demand residential and investment properties in Dubai’s fastest-growing areas.<br/>Our featured listings highlight the best deals, exclusive launches, and limited-time offers from trusted developers.</p><a href="https://giffyrealestate.com/projects/" target="_blank" rel="noreferrer">Explore all properties <ArrowUpRight size={14}/></a></div>
+    <div className="properties-intro"><p>Discover high-demand residential and investment properties in Dubai’s fastest-growing areas.<br/>Our featured listings highlight the best deals, exclusive launches, and limited-time offers from trusted developers.</p><a href="/projects">Explore all properties <ArrowUpRight size={14}/></a></div>
    </div>
    <div className="property-grid">{[featuredProperties.slice(0,2),featuredProperties.slice(2)].map((row,rowIndex)=><div className={`property-row property-row-${rowIndex+1}`} key={rowIndex}>{row.map((property,index)=><a key={property.name} className="property-card reveal-item" style={{'--reveal-delay':`${120+(rowIndex*2+index)*90}ms`}} href={property.href} target="_blank" rel="noreferrer">
     <div className="property-image"><img src={property.image} alt={property.alt} loading="lazy"/><span className="property-tag"><i/> {property.tag}</span><span className="property-open"><ArrowUpRight size={17}/></span></div>
@@ -317,7 +356,7 @@ function App() {
    <section className="reference-card craft-section management-craft" id="property-management" aria-labelledby="craft-title">
     <div className="craft-ribbon" aria-hidden="true">{Array.from({length:8},(_,i)=><span key={i}>HASSLE-FREE OWNERSHIP <b>✳</b> PROPERTY MANAGEMENT IN DUBAI <b>✳</b></span>)}</div>
     <header className="craft-heading"><span className="craft-eyebrow">01 / PROPERTY MANAGEMENT</span><h2 id="craft-title">Hassle-Free Property<br/>Management in <em>Dubai.</em></h2><div><p>Enjoy worry-free ownership with our end-to-end property management services. We keep your property occupied, well-maintained, and consistently profitable.</p><button onClick={()=>inquire('Get started with property management')}>GET STARTED <ArrowUpRight size={10}/></button></div></header>
-    <div className="craft-body"><figure><img src="/images/dubai-skyline.jpg" alt="Burj Khalifa and Downtown Dubai above illuminated roads at sunset" loading="lazy"/><figcaption><span>YOUR PROPERTY, OUR PRIORITY</span><span>DUBAI / GIFFY REAL ESTATE</span></figcaption></figure><div className="craft-details">{[['List &','Prepare','We inspect your property, set the right rental price, and get it ready for tenants. From presentation to pricing, every detail helps attract the right people.'],['Manage &','Maintain','We handle tenant communication, rent collection, and all maintenance needs. Our end-to-end service covers inspections and day-to-day care, so ownership stays simple.'],['Report &','Support','You receive clear monthly updates while we manage everything end-to-end. Stay informed about your property, rental income, and ongoing maintenance with support whenever you need it.']].map(([first,second,copy],index)=><article key={first}><h3>{first}<br/>{second}</h3><p>{copy}</p><button className={index===0?'craft-detail-active':''} aria-label={`Enquire about ${first} ${second}`} onClick={()=>inquire(`Property management: ${first} ${second}`)}><ArrowUpRight size={14}/></button></article>)}</div></div>
+    <div className="craft-body"><figure><img src="/images/dubai-skyline.jpg" alt="Burj Khalifa and Downtown Dubai above illuminated roads at sunset" loading="lazy"/><figcaption><span>YOUR PROPERTY, OUR PRIORITY</span><span>DUBAI / GIFFY REAL ESTATE</span></figcaption></figure><div className="craft-details">{[['List &','Prepare','We inspect your property, set the right rental price, and get it ready for tenants. From presentation to pricing, every detail helps attract the right people.'],['Manage &','Maintain','We handle tenant communication, rent collection, and all maintenance needs. Our end-to-end service covers inspections and day-to-day care, so ownership stays simple.'],['Report &','Support','You receive clear monthly updates while we manage everything end-to-end. Stay informed about your property, rental income, and ongoing maintenance with support whenever you need it.']].map(([first,second,copy],index)=><article key={first}><h3>{first}<br/>{second}</h3><p><span className="management-full-copy">{copy}</span><span className="management-compact-copy">{['We inspect your property, set the right rental price, and get it ready for tenants.','We handle tenant communication, rent collection, and all maintenance needs.','You receive clear monthly updates while we manage everything end-to-end.'][index]}</span></p><button className={index===0?'craft-detail-active':''} aria-label={`Enquire about ${first} ${second}`} onClick={()=>inquire(`Property management: ${first} ${second}`)}><ArrowUpRight size={14}/></button></article>)}</div></div>
     <div className="craft-ribbon craft-ribbon-bottom" aria-hidden="true">{Array.from({length:8},(_,i)=><span key={i}>LIST &amp; PREPARE <b>✳</b> MANAGE &amp; MAINTAIN <b>✳</b> REPORT &amp; SUPPORT <b>✳</b></span>)}</div>
    </section>
    <section className="reference-card reference-leadership restored-leadership" id="our-experience" aria-labelledby="experience-title">
@@ -338,4 +377,4 @@ function App() {
   <dialog ref={reviewDialog} className="reviews-dialog" onClick={e=>{if(e.target===reviewDialog.current)reviewDialog.current.close()}}><div className="dialog-content"><button className="dialog-close" aria-label="Close reviews" onClick={()=>reviewDialog.current.close()}><X/></button><span className="google-label"><span className="google-g">G</span> Google reviews</span><h2>Excellent, in your words.</h2><div className="review-dialog-rating"><Stars/><span>Based on 12 reviews</span></div><article className="review-card" aria-live="polite"><div className="reviewer"><span className="reviewer-avatar" style={{background:review.color}}>{review.initial}</span><strong>{review.name}</strong><BadgeCheck size={17}/></div><Stars/><p>{review.text}</p></article><div className="review-footer"><span><BadgeCheck size={15}/> Verified by Trustindex</span><div><button aria-label="Previous review" onClick={()=>setReviewIndex((reviewIndex+2)%3)}><ChevronLeft size={20}/></button><button aria-label="Next review" onClick={()=>setReviewIndex((reviewIndex+1)%3)}><ChevronRight size={20}/></button></div></div><a className="original-reviews" href="https://giffyrealestate.com/" target="_blank" rel="noreferrer">View reviews on Giffy’s website <ArrowUpRight size={14}/></a></div></dialog>
  </>;
 }
-createRoot(document.getElementById('root')).render(<App/>);
+createRoot(document.getElementById('root')).render(<SiteErrorBoundary><PageRouter renderPage={path=>path.startsWith('/projects')?<ProjectsPage projects={featuredProperties} byDeveloper={path.replace(/\/+$/,'')==='/projects/developers'}/>:<App/>}/></SiteErrorBoundary>);
