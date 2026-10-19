@@ -34,16 +34,16 @@ const featuredProperties = [
   { number: '03', name: 'Equestra Grand Polo', price: 'AED 1.06M', image: '/images/projects/equestra.png', alt: 'Equestrian community at Equestra Grand Polo', href: 'https://giffyrealestate.com/projects/equestra-grand-polo-club-resort-living/', tag: 'New release' },
   { number: '04', name: 'Marquis Vista', price: 'AED 661,000', image: '/images/projects/marquis-vista.png', alt: 'Marquis Vista contemporary residential development', href: 'https://giffyrealestate.com/projects/marquis-vista-2/', tag: 'Just listed' }
 ];
-const neighborhoods = [
-  { number: '01', name: 'Downtown Dubai', description: 'A connected city center shaped by culture, business and landmark living.' },
-  { number: '02', name: 'Dubai Marina', description: 'Waterfront homes, walkable streets and an active coastal pace.' },
-  { number: '03', name: 'Dubai Hills Estate', description: 'Green open spaces, family homes and everyday convenience.' },
-  { number: '04', name: 'Palm Jumeirah', description: 'Distinctive island residences with the water always close by.' }
+const services = [
+  { title: 'Property to Buy', description: 'Find the best ready and off-plan properties across Dubai, carefully selected for quality, ROI, and long-term value.' },
+  { title: 'Property to Sell', description: 'Sell your property faster with professional marketing, accurate valuation, and access to qualified buyers across Dubai.' },
+  { title: 'Property Management', description: 'Enjoy hassle-free ownership with full property management, tenant handling, maintenance, and rental supervision.' },
+  { title: 'Off-Plan Properties', description: 'Unlock early-stage investment opportunities with flexible payment plans from top Dubai developers.' }
 ];
-const approachPoints = [
-  { number: '01', title: 'Considered', description: 'We listen first, then shape a focused search around the home, location and priorities that matter to you.', metric: 'Your brief', caption: 'A search shaped around you' },
-  { number: '02', title: 'Personal', description: 'One Giffy advisor guides you through viewings, questions and decisions from the first conversation onward.', metric: 'One advisor', caption: 'Clear support at every step' },
-  { number: '03', title: 'Local', description: 'We bring on-the-ground Dubai knowledge to the details that make each community feel different.', metric: 'Dubai', caption: 'Local insight, thoughtfully shared' }
+const managementSteps = [
+  { title: 'List & Prepare', description: 'We inspect your property, set the right rental price, and get it ready for tenants.' },
+  { title: 'Manage & Maintain', description: 'We handle tenant communication, rent collection, and all maintenance needs.' },
+  { title: 'Report & Support', description: 'You receive clear monthly updates while we manage everything end-to-end.' }
 ];
 function CountUp({ from, to, label }) {
   const [value, setValue] = useState(from);
@@ -70,6 +70,9 @@ function Brand() {
 function Stars() { return <span className="stars" aria-label="5 out of 5 stars">{[0,1,2,3,4].map(i=><Star key={i} size={15} fill="currentColor" strokeWidth={0}/>)}</span>; }
 function App() {
  const [menuOpen, setMenuOpen] = useState(false);
+ const [contactOpen, setContactOpen] = useState(false);
+ const [contactMounted, setContactMounted] = useState(false);
+ const contactCloseTimer = useRef(null);
  const [lowBandwidth] = useState(() => {
    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
    return Boolean(connection?.saveData || /(^|-)2g|3g/.test(connection?.effectiveType || '') || (connection?.downlink && connection.downlink < 1.5));
@@ -112,13 +115,14 @@ function App() {
    aboutTimer.current = window.setTimeout(() => setAboutArriving(false), 750);
  };
  useEffect(() => () => window.clearTimeout(aboutTimer.current), []);
- const contactDialog = useRef(null);
  const reviewDialog = useRef(null);
- const inquire = purpose => { setMenuOpen(false); setIntent(purpose); contactDialog.current.showModal(); };
+ const inquire = purpose => { setMenuOpen(false); setIntent(purpose); window.clearTimeout(contactCloseTimer.current); setContactMounted(true); requestAnimationFrame(() => setContactOpen(true)); };
+ const closeContact = () => { setContactOpen(false); window.clearTimeout(contactCloseTimer.current); contactCloseTimer.current = window.setTimeout(() => setContactMounted(false), 720); };
+ useEffect(() => { if (!contactMounted) return; const handleEscape = event => { if (event.key === 'Escape') { setContactOpen(false); window.clearTimeout(contactCloseTimer.current); contactCloseTimer.current = window.setTimeout(() => setContactMounted(false), 720); } }; window.addEventListener('keydown', handleEscape); return () => window.removeEventListener('keydown', handleEscape); }, [contactMounted]);
  const navigate = (e, label) => { if (label === 'About Giffy' || label === 'Home' || label === 'Projects') { setMenuOpen(false); } else { e.preventDefault(); inquire(label); } };
  const review = reviews[reviewIndex];
  return <>
-  <div className="page-frame"><main className="hero-shell" id="home">
+  <div className={`page-transition-view${contactOpen?' page-view-away':''}`} aria-hidden={contactOpen} inert={contactOpen}><div className="page-frame"><main className="hero-shell" id="home">
    <header className="site-header">
     <div className="enter header-brand" style={{'--delay':'40ms'}}><Brand/></div>
     <nav className="desktop-nav" aria-label="Main navigation">{navigation.map((label,i)=><a className="enter" style={{'--delay':`${110+i*55}ms`}} href={label === 'About Giffy' ? '#about-giffy' : label === 'Projects' ? '#featured-properties' : '#home'} key={label} onClick={e=>navigate(e,label)}>{label}</a>)}</nav>
@@ -184,27 +188,24 @@ function App() {
    </a>)}</div>)}</div>
   </section>
   <div className="stacked-panels">
-   <section className="neighborhoods-section stack-panel reveal" id="neighborhoods" aria-labelledby="neighborhoods-title">
-    <div className="neighborhoods-heading">
-     <div><span className="section-index">NEIGHBORHOODS</span><h2 id="neighborhoods-title">where we work,<br/>and why it matters.</h2></div>
-     <p>We know Dubai’s communities street by street, bringing local insight to every search.</p>
-    </div>
-    <div className="neighborhoods-content">
-     <div className="neighborhood-list">{neighborhoods.map(area=><article className="neighborhood-item reveal-item" key={area.number}>
-      <span className="neighborhood-number">{area.number}</span><div><h3>{area.name}</h3><p>{area.description}</p></div><ArrowUpRight className="neighborhood-arrow" size={16}/>
-     </article>)}</div>
-     <figure className="neighborhood-photo reveal-item"><img src="/images/projects/marquis-vista.png" alt="Contemporary residential architecture in Dubai" loading="lazy"/><figcaption><span>Thoughtful homes in Dubai.</span><span>Dubai / Giffy</span></figcaption><span className="neighborhood-tag"><i/> Local insight, considered living</span></figure>
-    </div>
+   <section className="stack-panel creative-architecture" id="services" aria-labelledby="services-title">
+    <div className="creative-top"><Brand/><span>GIFFY REAL ESTATE</span><button className="creative-menu" onClick={()=>inquire('Explore Giffy Real Estate')}><Menu size={16}/> Menu</button></div>
+    <span className="creative-side-label">DUBAI / REAL ESTATE</span><span className="creative-side-count">01 ? 03</span>
+    <div className="architecture-copy"><span className="section-index">OUR SERVICES / DUBAI</span><h2 id="services-title">Explore<br/>the future.</h2><p>Find a home or investment that moves you forward. We bring clarity, care, and local insight to every Dubai property decision.</p><button className="creative-cta" onClick={()=>inquire('Explore property opportunities')}>Explore properties <ArrowUpRight size={15}/></button></div>
+    <figure className="architecture-image"><img src="/images/modern-villa.png" alt="Contemporary sculptural Dubai home with expansive glass and modern architecture" loading="lazy"/><figcaption>01 / A new perspective on Dubai living</figcaption></figure>
+    <div className="architecture-footer"><span>BUY</span><span>SELL</span><span>INVEST</span><span>PROPERTY CARE</span></div>
    </section>
-   <section className="approach-section stack-panel reveal" id="our-approach" aria-labelledby="approach-title">
-    <div className="approach-heading"><span className="section-index">THE APPROACH</span><h2 id="approach-title">we know Dubai by neighborhood,<br/>and guide every move with care.</h2></div>
-    <div className="approach-grid">{approachPoints.map(point=><article className="approach-card reveal-item" key={point.number}>
-     <span className="approach-number">{point.number}</span><h3>{point.title}</h3><p>{point.description}</p><div className="approach-metric"><strong>{point.metric}</strong><span>{point.caption}</span></div>
-    </article>)}</div>
+   <section className="stack-panel creative-story" id="property-management" aria-labelledby="story-title">
+    <div className="story-white"><div className="creative-top"><Brand/><span>THE GIFFY STORY</span><button className="creative-menu" onClick={()=>inquire('Our story')}><Menu size={16}/> Menu</button></div><span className="story-vertical">DUBAI / PERSONAL GUIDANCE</span><span className="story-watermark">02</span><div className="story-copy"><span className="section-index">A PERSONAL APPROACH</span><h2 id="story-title">The Story.</h2><p>Behind every move is a personal story. We pair deep Dubai market knowledge with thoughtful, one-to-one guidance, so your next chapter begins with confidence.</p><button className="text-link" onClick={()=>inquire('Meet Giffy')}>Get to know Giffy <ArrowUpRight size={14}/></button><div className="story-social"><a href="https://instagram.com/giffyrealestate" target="_blank" rel="noreferrer">Instagram</a><span>?</span><a href="https://giffyrealestate.com/" target="_blank" rel="noreferrer">Giffy Real Estate</a></div></div><span className="story-grid-mark" aria-hidden="true"/></div><div className="story-dark"><button className="story-menu-button" onClick={()=>inquire('Explore Giffy')} aria-label="Open contact page"><Menu/></button><span className="story-progress">02 <i/> 03</span><div className="story-film"><img src="/videos/giffy-story-poster.jpg" alt="A cinematic view of a Dubai residence"/><span>Giffy / Dubai</span></div><span className="story-arrows" aria-hidden="true">?<br/>?</span></div>
+   </section>
+   <section className="stack-panel creative-founder" id="our-experience" aria-labelledby="founder-title">
+    <div className="founder-white"><div className="creative-top"><Brand/><span>GIFFY REAL ESTATE / 03</span><button className="creative-menu" onClick={()=>inquire('Contact Giffy')}><Menu size={16}/> Menu</button></div><div className="founder-copy"><span className="section-index">LEADERSHIP / DUBAI</span><h2 id="founder-title">Experience<br/>over things.<br/><strong>Always.</strong></h2><p>Thoughtful real estate guidance begins with listening. Our founder brings a personal understanding of the Dubai market to every client relationship.</p><div className="founder-caption"><strong>Gift Preye Solomon</strong><span>Founder & CEO, Giffy Real Estate</span></div></div><span className="founder-counter">03 / 03&nbsp;&nbsp; FOUNDER?S NOTE <ArrowUpRight size={13}/></span></div><figure className="founder-photo"><img src="/images/giffy-ceo.jpg" alt="Gift Preye Solomon, Founder and CEO of Giffy Real Estate" loading="lazy"/><figcaption>GIFFY REAL ESTATE / DUBAI</figcaption></figure><aside className="founder-aside"><span className="founder-search">?</span><span className="founder-menu-line"/><div><span className="section-index">A POINT OF VIEW</span><p>Local insight.<br/>Personal guidance.<br/>A better way forward.</p><div className="founder-detail"><span>FOUNDER & CEO</span><strong>GIFT PREYE<br/>SOLOMON</strong></div></div><span className="founder-side-text">DESIGNED AROUND YOU</span><div className="founder-social">IG&nbsp;&nbsp;&nbsp; IN</div></aside>
    </section>
   </div>
+  </div>
+  {contactMounted&&<section className={`contact-page${contactOpen?' contact-page-entered':''}`} role="dialog" aria-modal="true" aria-labelledby="contact-title"><div className="contact-page-content"><div className="contact-page-top"><button className="contact-menu" onClick={closeContact}><Menu size={17}/> <span>Back to Giffy</span></button><Brand/></div><h1 id="contact-title">CONTACT</h1><div className="contact-details"><p className="contact-intro">For enquiries, or just to say hello, get in touch and contact us.</p><div className="contact-detail-grid"><div><span>New projects</span><a href="mailto:info@giffyrealestate.com">info@giffyrealestate.com</a></div><div><span>General enquiries</span><a href="mailto:info@giffyrealestate.com">info@giffyrealestate.com</a><a href="tel:+97145703395">+971 4 570 3395</a></div><div><span>Address</span><p>Prime Tower<br/>Business Bay, Dubai</p></div><div><span>Careers &amp; Partnerships</span><a href="https://wa.me/971522656819" target="_blank" rel="noreferrer">Chat with our team</a></div><div><span>Call us</span><a href="tel:+97145703395">+971 4 570 3395</a></div><div><span>Follow us</span><div className="contact-social"><a href="https://instagram.com/giffyrealestate" target="_blank" rel="noreferrer">IG</a><a href="https://facebook.com/giffyrealestate" target="_blank" rel="noreferrer">FB</a><a href="https://linkedin.com/company/giffy-real-estate" target="_blank" rel="noreferrer">IN</a></div></div></div></div><span className="contact-footnote">{intent || 'A considered way to live.'} / DUBAI</span></div><figure className="contact-page-image"><img src="/images/about-residence.jpg" alt="A welcoming modern residence with warm natural light"/><figcaption>GIFFY REAL ESTATE / DUBAI</figcaption></figure><button className="contact-close" onClick={closeContact} aria-label="Close contact page"><X size={19}/></button></section>}
   {telemetryEnabled && <><Analytics/><SpeedInsights/></>}
-  <dialog ref={contactDialog} className="contact-dialog" onClick={e=>{if(e.target===contactDialog.current)contactDialog.current.close()}}><div className="dialog-content"><button className="dialog-close" aria-label="Close dialog" onClick={()=>contactDialog.current.close()}><X/></button><span className="eyebrow">YOUR NEXT CHAPTER</span><h2>{intent}</h2><p>Tell our Dubai team what you have in mind. We’ll help you explore the next step.</p><a className="button dialog-action" href={`mailto:info@giffyrealestate.com?subject=${encodeURIComponent(intent)}`}>Email our team <ArrowUpRight size={17}/></a><a className="whatsapp" href="https://wa.me/971522656819" target="_blank" rel="noreferrer">Chat on WhatsApp <ArrowUpRight size={16}/></a><a className="phone" href="tel:+97145703395">+971 4 570 3395</a></div></dialog>
+
   <dialog ref={reviewDialog} className="reviews-dialog" onClick={e=>{if(e.target===reviewDialog.current)reviewDialog.current.close()}}><div className="dialog-content"><button className="dialog-close" aria-label="Close reviews" onClick={()=>reviewDialog.current.close()}><X/></button><span className="google-label"><span className="google-g">G</span> Google reviews</span><h2>Excellent, in your words.</h2><div className="review-dialog-rating"><Stars/><span>Based on 12 reviews</span></div><article className="review-card" aria-live="polite"><div className="reviewer"><span className="reviewer-avatar" style={{background:review.color}}>{review.initial}</span><strong>{review.name}</strong><BadgeCheck size={17}/></div><Stars/><p>{review.text}</p></article><div className="review-footer"><span><BadgeCheck size={15}/> Verified by Trustindex</span><div><button aria-label="Previous review" onClick={()=>setReviewIndex((reviewIndex+2)%3)}><ChevronLeft size={20}/></button><button aria-label="Next review" onClick={()=>setReviewIndex((reviewIndex+1)%3)}><ChevronRight size={20}/></button></div></div><a className="original-reviews" href="https://giffyrealestate.com/" target="_blank" rel="noreferrer">View reviews on Giffy’s website <ArrowUpRight size={14}/></a></div></dialog>
  </>;
 }
