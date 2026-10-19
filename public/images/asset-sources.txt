@@ -7,3 +7,7 @@ Architectural image in explore-building.jpg: Unsplash, Victor ? https://unsplash
 Unsplash Christmas desktop image in story-reference.jpg: https://unsplash.com/photos/a-desk-with-a-computer-and-a-christmas-tree-RtJkv9RqoTs
 
 Explore reference architecture image: Design Building in Cascais, Portugal, by Frederico Valsassina. Image source: https://st3.idealista.pt/news/arquivos/styles/fullwidth_xl/public/2017-11/designbuilding1.jpg?VersionId=Hk..yL8dU9LWXYsyMaLo4XRYxT60LMGr&itok=X0MicFN6
+
+Vlog videos downloaded from the VLOGS section of https://giffyrealestate.com/:
+public/videos/vlog-property-tips.mp4: https://giffyrealestate.com/wp-content/uploads/2025/11/home_video_3.mp4
+public/videos/vlog-golden-visa.mp4: https://giffyrealestate.com/wp-content/uploads/2025/11/home_video_4.mp4

@@ -102,7 +102,7 @@ function ServicesScroll({ onEnquire }) {
  }, []);
  return <section ref={sectionRef} className="services-scroll-section" id="services" aria-labelledby="services-scroll-title"><div className="services-scroll-pin"><header className="services-scroll-heading"><span>OUR SERVICES</span><h2 id="services-scroll-title">OUR REAL ESTATE<br/>SERVICES IN DUBAI.</h2><p>Get expert support for buying, selling, investing, and managing properties across Dubai. Giffy Real Estate LLC provides end-to-end solutions tailored to homeowners, investors, and international buyers.</p></header><div className="services-scroll-window"><div className="services-scroll-track" ref={trackRef}>{serviceCards.map((service,index)=><article className="services-scroll-card" key={service.title}><span className="services-card-number">{String(index+1).padStart(2,'0')}</span><div><h3>{service.title}</h3><p>{service.text}</p><button onClick={()=>onEnquire(service.title)}>Learn more <ArrowUpRight size={14}/></button></div></article>)}</div></div><span className="services-scroll-note">SCROLL TO EXPLORE ALL SERVICES <span aria-hidden="true">→</span></span></div></section>;
 }
-function ProjectsHeadline() {
+function ProjectsHeadline({ children }) {
  const sectionRef = useRef(null);
  const lineRef = useRef(null);
  const text = 'Discover the art of living through our finest projects';
@@ -116,9 +116,14 @@ function ProjectsHeadline() {
    const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--site-header-height')) || 58;
    const rect = section.getBoundingClientRect();
    const entrance = Math.min(1, Math.max(0, (window.innerHeight * .85 - rect.top) / (window.innerHeight * .55)));
+   const distance = Math.min(travel, Math.max(0, header - rect.top));
+   line.style.transform = `translate3d(${-distance}px,0,0)`;
+   const lineLeft = line.getBoundingClientRect().left;
    letters.forEach((letter,index) => {
-    const delay = (index % 7) * .035;
-    const progress = reduced ? 1 : Math.min(1, Math.max(0, (entrance - delay) / (1 - delay)));
+    const naturalLeft = lineLeft + letter.parentElement.offsetLeft + letter.offsetLeft;
+    const visibility = Math.min(1, Math.max(0, (window.innerWidth * .98 - naturalLeft) / (window.innerWidth * .25)));
+    const delay = (index % 5) * .025;
+    const progress = reduced ? 1 : Math.min(1, Math.max(0, (Math.min(entrance, visibility) - delay) / (1 - delay)));
     const remaining = Math.pow(1 - progress, 3);
     const x = [120,-90,60,-140,0][index % 5] * remaining;
     const y = [-170,150,-100,130,-200][index % 5] * remaining;
@@ -126,24 +131,41 @@ function ProjectsHeadline() {
     letter.style.transform = `translate3d(${x}px,${y}px,0) rotate(${rotation}deg)`;
     letter.style.opacity = String(Math.min(1, progress * 3));
    });
-   const distance = Math.min(travel, Math.max(0, header - rect.top));
-   line.style.transform = `translate3d(${-distance}px,0,0)`;
   };
   const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
   const measure = () => {
    travel = Math.max(0, line.scrollWidth - line.parentElement.clientWidth);
    section.style.setProperty('--headline-travel', `${travel}px`);
+   section.style.setProperty('--headline-content-height', `${section.firstElementChild.getBoundingClientRect().height}px`);
    schedule();
   };
   const observer = new ResizeObserver(measure);
-  observer.observe(line); observer.observe(line.parentElement);
+  observer.observe(line); observer.observe(line.parentElement); observer.observe(section.firstElementChild);
   window.addEventListener('scroll', schedule, { passive: true });
   window.addEventListener('resize', measure);
   document.fonts.ready.then(measure);
   measure();
   return () => { observer.disconnect(); window.removeEventListener('scroll', schedule); window.removeEventListener('resize', measure); cancelAnimationFrame(frame); };
  }, []);
- return <section className="projects-headline-section" ref={sectionRef} aria-labelledby="projects-headline-title"><div className="projects-headline-pin"><h2 id="projects-headline-title" className="projects-headline-window" aria-label={text}><span ref={lineRef} className="projects-headline-line" aria-hidden="true">{text.split(' ').map((word,wordIndex)=><React.Fragment key={wordIndex}><span className="projects-headline-word">{[...word].map((letter,index)=><span className="projects-headline-letter" key={index}>{letter}</span>)}</span>{wordIndex < text.split(' ').length-1 ? ' ' : null}</React.Fragment>)}</span></h2></div></section>;
+ return <section className="projects-headline-section" ref={sectionRef} aria-labelledby="projects-headline-title"><div className="projects-headline-pin"><h2 id="projects-headline-title" className="projects-headline-window" aria-label={text}><span ref={lineRef} className="projects-headline-line" aria-hidden="true">{text.split(' ').map((word,wordIndex)=><React.Fragment key={wordIndex}><span className="projects-headline-word">{[...word].map((letter,index)=><span className="projects-headline-letter" key={index}>{letter}</span>)}</span>{wordIndex < text.split(' ').length-1 ? ' ' : null}</React.Fragment>)}</span></h2>{children}</div></section>;
+}
+function SiteFooter({ onContact }) {
+ const [email, setEmail] = useState('');
+ const propertyTypes = [['Commercial',false],['Office',true],['Shop',true],['Residential',false],['Apartment',true],['Apartment Building',true],['Condominium',true],['Single Family Home',true],['Villa',true]];
+ return <footer className="classic-footer">
+  <div className="classic-footer-inner">
+   <div className="classic-footer-partners" aria-label="Our developer partners">{[['emaar','EMAAR'],['damac','DAMAC'],['binghatti','Binghatti'],['imtiaz','Imtiaz Developments'],['object-one','Object 1']].map(([slug,name])=><img key={slug} src={`/images/developers/${slug}.png`} alt={name} loading="lazy"/>)}</div>
+   <div className="classic-footer-columns">
+    <div><h2>Contact Info</h2><address>Prime Tower, Business Bay,<br/>Dubai, United Arab Emirates</address><p>Phone: <a href="tel:+97145703395">+971 4 570 3395</a></p><p>Email: <a href="mailto:info@giffyrealestate.com">info@giffyrealestate.com</a></p></div>
+    <nav aria-label="Property types"><h2>Property Types</h2><ul>{propertyTypes.map(([type,indent])=><li className={indent?'classic-footer-indent':''} key={type}><button onClick={()=>onContact(`Find a property: ${type}`)}>{type}</button></li>)}</ul></nav>
+    <div><h2>Newsletter</h2><form onSubmit={event=>{event.preventDefault();onContact(`Newsletter signup request: ${email}`);}}><label htmlFor="footer-email">Email address:</label><input id="footer-email" type="email" required value={email} onChange={event=>setEmail(event.target.value)} placeholder="Your email address" autoComplete="email"/><button className="classic-footer-signup" type="submit">Sign up</button></form></div>
+    <nav aria-label="Giffy stories and insights"><h2>Stories &amp; Insights</h2><ul><li><a href="#featured-properties">Featured Properties in Dubai</a></li><li><a href="#property-management">Hassle-Free Property Management</a></li><li><a href="#our-experience">A Decade of Real Estate Experience</a></li></ul></nav>
+   </div>
+   <div className="classic-footer-bottom"><span>© {new Date().getFullYear()} Giffy Real Estate LLC. All rights reserved.</span><span>Thoughtful guidance. Exceptional homes.</span></div>
+  </div>
+  <svg className="classic-footer-skyline" viewBox="0 0 1680 230" preserveAspectRatio="none" aria-hidden="true" focusable="false">{[0,1,2].map(layer=><g key={layer} fill={['#d9dce0','#c6cbd0','#afb7bf'][layer]}>{Array.from({length:58},(_,i)=>{const x=i*30-15+layer*9;const h=22+((i*47+layer*29)%115);const y=230-h-layer*4;return <g key={i}><path d={`M${x} 230 V${y} l12 -${i%4===0?12:0} h14 v${230-y+12}Z`}/>{i%7===0&&<path d={`M${x+11} ${y}v-24h3v24Z`}/>}</g>;})}<path d="M820 230V78h12V50h8V20h3V0h3v20h3v30h8v28h12v152Z"/>{Array.from({length:45},(_,i)=><rect key={i} x={i*39+layer*5} y={190+(i%3)*12} width="3" height="7" fill="#f5f5f5" opacity=".9"/>)}</g>)}</svg>
+  <a className="classic-footer-top" href="#home" aria-label="Back to top">⌃</a>
+ </footer>;
 }
 function App() {
  const [menuOpen, setMenuOpen] = useState(false);
@@ -282,7 +304,7 @@ function App() {
    </section>
    <ServicesScroll onEnquire={inquire}/>
   </div>
-  <ProjectsHeadline/>
+  <ProjectsHeadline><SiteFooter onContact={inquire}/></ProjectsHeadline>
   </div>
   {contactMounted&&<section className={`contact-page${contactOpen?' contact-page-entered':''}`} role="dialog" aria-modal="true" aria-labelledby="contact-title"><div className="contact-page-content"><div className="contact-page-top"><button className="contact-menu" onClick={closeContact}><Menu size={17}/> <span>Back to Giffy</span></button><Brand/></div><h1 id="contact-title">CONTACT</h1><div className="contact-details"><p className="contact-intro">For enquiries, or just to say hello, get in touch and contact us.</p><div className="contact-detail-grid"><div><span>New projects</span><a href="mailto:info@giffyrealestate.com">info@giffyrealestate.com</a></div><div><span>General enquiries</span><a href="mailto:info@giffyrealestate.com">info@giffyrealestate.com</a><a href="tel:+97145703395">+971 4 570 3395</a></div><div><span>Address</span><p>Prime Tower<br/>Business Bay, Dubai</p></div><div><span>Careers &amp; Partnerships</span><a href="https://wa.me/971522656819" target="_blank" rel="noreferrer">Chat with our team</a></div><div><span>Call us</span><a href="tel:+97145703395">+971 4 570 3395</a></div><div><span>Follow us</span><div className="contact-social"><a href="https://instagram.com/giffyrealestate" target="_blank" rel="noreferrer">IG</a><a href="https://facebook.com/giffyrealestate" target="_blank" rel="noreferrer">FB</a><a href="https://linkedin.com/company/giffy-real-estate" target="_blank" rel="noreferrer">IN</a></div></div></div></div><span className="contact-footnote">{intent || 'A considered way to live.'} / DUBAI</span></div><figure className="contact-page-image"><img src="/images/about-residence.jpg" alt="A welcoming modern residence with warm natural light"/><figcaption>GIFFY REAL ESTATE / DUBAI</figcaption></figure><button className="contact-close" onClick={closeContact} aria-label="Close contact page"><X size={19}/></button></section>}
   {telemetryEnabled && <><Analytics/><SpeedInsights/></>}
