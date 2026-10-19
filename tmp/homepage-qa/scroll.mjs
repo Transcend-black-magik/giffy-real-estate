@@ -1,0 +1,16 @@
+import { chromium } from 'file:///C:/Users/kuteo/AppData/Local/npm-cache/_npx/420ff84f11983ee5/node_modules/playwright/index.mjs';
+const browser=await chromium.launch();
+const page=await browser.newPage({viewport:{width:1440,height:1000}});
+await page.goto('http://127.0.0.1:5174/',{waitUntil:'networkidle'});
+await page.screenshot({path:'tmp/homepage-qa/hero.png'});
+const geometry=await page.locator('#services').evaluate(el=>({start:el.getBoundingClientRect().top+scrollY,travel:parseFloat(el.style.getPropertyValue('--services-travel'))}));
+await page.evaluate(y=>scrollTo(0,y),geometry.start-58);await page.waitForTimeout(500);
+await page.screenshot({path:'tmp/homepage-qa/services-start.png'});
+await page.evaluate(y=>scrollTo(0,y),geometry.start-58+geometry.travel);await page.waitForTimeout(500);
+console.log('services end',await page.locator('.services-scroll-card').last().evaluate(el=>({left:el.getBoundingClientRect().left,right:el.getBoundingClientRect().right,viewport:innerWidth})));
+console.log('header',await page.locator('.site-header').evaluate(el=>({top:el.getBoundingClientRect().top,height:el.getBoundingClientRect().height})));
+await page.locator('.desktop-nav').getByRole('link',{name:'About Giffy'}).click();await page.waitForTimeout(1700);
+console.log('about anchor',await page.locator('#our-experience').evaluate(el=>el.getBoundingClientRect().top));
+await page.evaluate(async()=>{await Promise.all([...document.images].map(i=>{i.loading='eager';return i.decode().catch(()=>null);}));});
+console.log('broken',await page.evaluate(()=>[...document.images].filter(i=>!i.naturalWidth).map(i=>i.src)));
+await browser.close();
