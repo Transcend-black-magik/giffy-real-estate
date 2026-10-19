@@ -10,6 +10,7 @@ import { SiteErrorBoundary } from './ErrorScreens.jsx';
 import { ConsultationProvider } from './ConsultationModal.jsx';
 import PageRouter from './PageRouter.jsx';
 import ProjectsPage, { ProjectsMenu } from './ProjectsPage.jsx';
+import AboutGiffyPage from './AboutPage.jsx';
 import { allProjects } from './projects-data.js';
 
 const navigation = ['Home', 'Projects', 'Sell', 'Rent', 'Services', 'About Giffy'];
@@ -138,6 +139,17 @@ function App() {
      if (!motionPreference.matches) revealObserver.observe(element);
     });
    });
+   const entranceFrame=requestAnimationFrame(()=>{
+    let visibleIndex=0;
+    entranceTargets.forEach(element=>{
+     const bounds=element.getBoundingClientRect();
+     if(bounds.top<window.innerHeight*.96&&bounds.bottom>0){
+      element.style.setProperty('--entrance-delay',`${(visibleIndex++%5)*60}ms`);
+      element.classList.add('entrance-visible');
+      revealObserver.unobserve(element);
+     }
+    });
+   });
    const showAllEntrances = () => {
     if (motionPreference.matches) {
      entranceTargets.forEach(element => element.classList.add('entrance-visible'));
@@ -177,7 +189,7 @@ function App() {
     if (!settling) settleTimer = window.setTimeout(settleStack,180);
    };
    window.addEventListener('scroll',scheduleSettle,{passive:true});
-   return () => { window.removeEventListener('giffy:scroll-lock',stopPageScroll); window.removeEventListener('giffy:scroll-unlock',resumePageScroll); window.removeEventListener('scroll',scheduleSettle); window.clearTimeout(settleTimer); if(frame) cancelAnimationFrame(frame); lenis?.destroy(); revealObserver.disconnect(); videoObserver.disconnect(); motionPreference.removeEventListener('change', showAllEntrances); entranceTargets.forEach(element => { element.classList.remove('content-entrance','entrance-visible','entrance-media','entrance-action'); element.style.removeProperty('--entrance-delay'); }); };
+   return () => { window.removeEventListener('giffy:scroll-lock',stopPageScroll); window.removeEventListener('giffy:scroll-unlock',resumePageScroll); window.removeEventListener('scroll',scheduleSettle); window.clearTimeout(settleTimer); cancelAnimationFrame(entranceFrame); if(frame) cancelAnimationFrame(frame); lenis?.destroy(); revealObserver.disconnect(); videoObserver.disconnect(); motionPreference.removeEventListener('change', showAllEntrances); entranceTargets.forEach(element => { element.classList.remove('content-entrance','entrance-visible','entrance-media','entrance-action'); element.style.removeProperty('--entrance-delay'); }); };
  }, []);
  useEffect(() => {
   const section = document.querySelector('#featured-properties');
@@ -384,4 +396,4 @@ function App() {
   <dialog ref={reviewDialog} className="reviews-dialog" onClick={e=>{if(e.target===reviewDialog.current)reviewDialog.current.close()}}><div className="dialog-content"><button className="dialog-close" aria-label="Close reviews" onClick={()=>reviewDialog.current.close()}><X/></button><span className="google-label"><span className="google-g">G</span> Google reviews</span><h2>Excellent, in your words.</h2><div className="review-dialog-rating"><Stars/><span>Based on 12 reviews</span></div><article className="review-card" aria-live="polite"><div className="reviewer"><span className="reviewer-avatar" style={{background:review.color}}>{review.initial}</span><strong>{review.name}</strong><BadgeCheck size={17}/></div><Stars/><p>{review.text}</p></article><div className="review-footer"><span><BadgeCheck size={15}/> Verified by Trustindex</span><div><button aria-label="Previous review" onClick={()=>setReviewIndex((reviewIndex+2)%3)}><ChevronLeft size={20}/></button><button aria-label="Next review" onClick={()=>setReviewIndex((reviewIndex+1)%3)}><ChevronRight size={20}/></button></div></div><a className="original-reviews" href="https://giffyrealestate.com/" target="_blank" rel="noreferrer">View reviews on Giffy’s website <ArrowUpRight size={14}/></a></div></dialog>
  </>;
 }
-createRoot(document.getElementById('root')).render(<SiteErrorBoundary><ConsultationProvider><PageRouter renderPage={path=>path.startsWith('/projects')?<ProjectsPage projects={allProjects} byDeveloper={path.replace(/\/+$/,'')==='/projects/developers'} selectedProject={allProjects.find(project=>project.path===path.replace(/\/+$/,''))}/>:<App/>}/></ConsultationProvider></SiteErrorBoundary>);
+createRoot(document.getElementById('root')).render(<SiteErrorBoundary><ConsultationProvider><PageRouter renderPage={path=>path.startsWith('/projects')?<ProjectsPage projects={allProjects} byDeveloper={path.replace(/\/+$/,'')==='/projects/developers'} selectedProject={allProjects.find(project=>project.path===path.replace(/\/+$/,''))}/>:path.replace(/\/+$/,'')==='/about'?<AboutGiffyPage/>:<App/>}/></ConsultationProvider></SiteErrorBoundary>);

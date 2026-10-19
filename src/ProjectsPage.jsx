@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useId } from 'react';
+import React, { useEffect, useLayoutEffect, useState, useId } from 'react';
 import { ArrowLeft, ArrowUpRight, CalendarDays, ChevronDown, MapPin } from 'lucide-react';
 import { siteHeaderMarkup, siteFooterMarkup } from './site-chrome.js';
 import { navigationMenus } from './navigation-menus.js';
@@ -44,11 +44,17 @@ function AllProjectsPage({ projects }) {
 }
 
 function DeveloperDirectory({ projects }) {
- useEffect(()=>{
+ useLayoutEffect(()=>{
   document.title='Our Developer Partners | Giffy Real Estate';
-  const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('developer-visible');observer.unobserve(entry.target);}}),{threshold:.12});
-  document.querySelectorAll('.developer-directory [data-developer-enter]').forEach(el=>observer.observe(el));
-  return ()=>observer.disconnect();
+  const root=document.querySelector('.developer-directory');
+  if(!root)return;
+  root.classList.add('developer-enter-ready');
+  const targets=[...root.querySelectorAll('[data-developer-enter]')];
+  const frame=requestAnimationFrame(()=>targets.forEach((element,index)=>{
+   element.style.setProperty('--developer-index',String(Math.min(index,10)));
+   element.classList.add('developer-visible');
+  }));
+  return ()=>{cancelAnimationFrame(frame);root.classList.remove('developer-enter-ready');};
  },[]);
  return <div className="projects-page"><div dangerouslySetInnerHTML={{__html:siteHeaderMarkup()}}/><main className="developer-directory"><header className="developer-directory-heading"><div className="developer-directory-kicker" data-developer-enter><span>WHY OUR DEVELOPER NETWORK?</span></div><div className="developer-directory-title" data-developer-enter><span>OUR NETWORK / YOUR ADVANTAGE</span><h1>Fast access to Dubai’s leading developers.</h1><p>We connect your property goals with trusted teams shaping the city’s most distinctive communities.</p></div></header><section className="developer-directory-grid" aria-label="Our developer partners"><aside className="developer-directory-intro" data-developer-enter><span>ARE YOU READY FOR YOUR NEXT MOVE?</span><p>Our direct relationships help you discover the right project with clear guidance, considered options, and access to Dubai’s most established developers.</p><strong>Meet the partners behind the places people call home.</strong></aside>{developerPartners.map((developer,index)=>{const hasListings=projects.some(project=>project.developer===developer.filter);const href=hasListings?`/projects?developer=${encodeURIComponent(developer.filter)}`:'/contact?consultation=1';return <article className="developer-directory-card" data-developer-enter key={developer.name} style={{'--developer-index':index}}><div className="developer-card-top"><span>{String(index+1).padStart(2,'0')} / DEVELOPER</span><img src={developer.logo} alt={`${developer.name} logo`} loading="lazy"/></div><div className="developer-card-copy"><h2>{developer.name}</h2><p>{developer.description}</p></div><a href={href} className="developer-card-link" {...(!hasListings?{'data-book-consultation':true,'data-consultation-purpose':`Request ${developer.name} projects`}:{})}>{hasListings?`View ${developer.name.split(' ')[0]} projects`:`Request ${developer.name.split(' ')[0]} projects`}<ArrowUpRight size={15}/></a></article>;})}</section><section className="developer-partnership-cta" data-developer-enter><span>GIFFY REAL ESTATE / CERTIFIED PARTNERSHIPS</span><h2>Partnerships built on<br/><em>excellence.</em></h2><p>Gain exclusive, direct access to Dubai’s most anticipated projects and premier properties through our certified partnerships with the region’s leading developers.</p><a href="/contact?consultation=1" data-book-consultation data-consultation-purpose="Request exclusive project details">Request exclusive project details <ArrowUpRight size={17}/></a><small>PERSONAL GUIDANCE / EXCLUSIVE ACCESS / DUBAI</small></section></main><div dangerouslySetInnerHTML={{__html:siteFooterMarkup()}}/></div>;
 }
