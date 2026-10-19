@@ -443,3 +443,4 @@ html{scroll-padding-top:calc(var(--site-header-height) + 20px)}
 .developer-directory-grid{background:#fff;border-color:#fff}
 .developer-directory-intro{background:#fff}
 .classic-footer{background:#fff}
+.classic-footer{border-top:1px solid #e3e5e7}
