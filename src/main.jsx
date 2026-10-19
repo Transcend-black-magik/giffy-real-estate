@@ -34,6 +34,17 @@ const featuredProperties = [
   { number: '03', name: 'Equestra Grand Polo', price: 'AED 1.06M', image: '/images/projects/equestra.png', alt: 'Equestrian community at Equestra Grand Polo', href: 'https://giffyrealestate.com/projects/equestra-grand-polo-club-resort-living/', tag: 'New release' },
   { number: '04', name: 'Marquis Vista', price: 'AED 661,000', image: '/images/projects/marquis-vista.png', alt: 'Marquis Vista contemporary residential development', href: 'https://giffyrealestate.com/projects/marquis-vista-2/', tag: 'Just listed' }
 ];
+const neighborhoods = [
+  { number: '01', name: 'Downtown Dubai', description: 'A connected city center shaped by culture, business and landmark living.' },
+  { number: '02', name: 'Dubai Marina', description: 'Waterfront homes, walkable streets and an active coastal pace.' },
+  { number: '03', name: 'Dubai Hills Estate', description: 'Green open spaces, family homes and everyday convenience.' },
+  { number: '04', name: 'Palm Jumeirah', description: 'Distinctive island residences with the water always close by.' }
+];
+const approachPoints = [
+  { number: '01', title: 'Considered', description: 'We listen first, then shape a focused search around the home, location and priorities that matter to you.', metric: 'Your brief', caption: 'A search shaped around you' },
+  { number: '02', title: 'Personal', description: 'One Giffy advisor guides you through viewings, questions and decisions from the first conversation onward.', metric: 'One advisor', caption: 'Clear support at every step' },
+  { number: '03', title: 'Local', description: 'We bring on-the-ground Dubai knowledge to the details that make each community feel different.', metric: 'Dubai', caption: 'Local insight, thoughtfully shared' }
+];
 function CountUp({ from, to, label }) {
   const [value, setValue] = useState(from);
   useEffect(() => {
@@ -151,20 +162,20 @@ function App() {
     </div>
    </div>
   </section>
-  <section className={`about-section reveal${aboutArriving?' about-arriving':''}${aboutDirection<0?' about-reverse':''}`} id="about-giffy" aria-labelledby="about-title">
+  <section className="about-section reveal" id="about-giffy" aria-labelledby="about-title">
    <div className="about-section-label reveal-item" style={{'--reveal-delay':'0ms'}}><span>01</span> ABOUT GIFFY</div>
-   <h2 id="about-title" key={`title-${aboutIndex}`} className="about-statement about-carousel-item">{aboutStory.title}</h2>
+   <h2 id="about-title" key={`title-${aboutIndex}`} className={`about-statement about-carousel-item${aboutArriving?` about-entering ${aboutDirection<0?'about-backward':'about-forward'}`:''}`}>{aboutStory.title}</h2>
    <div className="about-seal reveal-item" style={{'--reveal-delay':'240ms'}} aria-hidden="true"><span>GIFFY REAL ESTATE</span><img src="/images/giffy-logo.png" alt="" width="2330" height="807"/><span>DUBAI / PERSONAL GUIDANCE</span></div>
-   <div key={`story-${aboutIndex}`} className="about-story about-carousel-item"><span className="about-line" aria-hidden="true"/><p>{aboutStory.description}</p><button className="text-link" onClick={()=>inquire('Meet Giffy Real Estate')}>Get to know Giffy <ArrowUpRight size={14}/></button></div>
+   <div key={`story-${aboutIndex}`} className={`about-story about-carousel-item${aboutArriving?` about-entering ${aboutDirection<0?'about-backward':'about-forward'}`:''}`}><span className="about-line" aria-hidden="true"/><p>{aboutStory.description}</p><button className="text-link" onClick={()=>inquire('Meet Giffy Real Estate')}>Get to know Giffy <ArrowUpRight size={14}/></button></div>
    <span className="about-asterisks reveal-item" style={{'--reveal-delay':'420ms'}} aria-hidden="true">&#10035; &#10035; &#10035;</span>
-   <figure key={`photo-${aboutIndex}`} className="about-photo about-carousel-item"><img src={aboutStory.image} alt={aboutStory.alt} loading="lazy" width="900" height="1100"/><figcaption><span>{aboutStory.caption}</span><span>Dubai / Giffy</span></figcaption></figure>
+   <figure key={`photo-${aboutIndex}`} className={`about-photo about-carousel-item${aboutArriving?` about-entering ${aboutDirection<0?'about-backward':'about-forward'}`:''}`}><img src={aboutStory.image} alt={aboutStory.alt} loading="lazy" width="900" height="1100"/><figcaption><span>{aboutStory.caption}</span><span>Dubai / Giffy</span></figcaption></figure>
    <button className="about-top-link reveal-item" style={{'--reveal-delay':'550ms'}} onClick={()=>changeAboutStory(-1)} aria-label="Previous Giffy story"><ChevronLeft size={18}/></button>
    <button className="about-next-link reveal-item" style={{'--reveal-delay':'400ms'}} onClick={()=>changeAboutStory(1)} aria-label="Next Giffy story"><ChevronRight size={18}/></button>
   </section>
   <section className="properties-section reveal" id="featured-properties" aria-labelledby="properties-title">
    <div className="properties-heading">
-    <div><span className="section-index">A CURATED SELECTION / DUBAI</span><h2 id="properties-title">A curated set,<br/>shown by appointment.</h2></div>
-    <div className="properties-intro"><p>Explore a selection of Giffy property opportunities, chosen for different ambitions and ways of living.</p><a href="https://giffyrealestate.com/projects/" target="_blank" rel="noreferrer">View all projects <ArrowUpRight size={14}/></a></div>
+    <div><span className="section-index">Our Top Property Picks in Dubai</span><h2 id="properties-title">Check out Featured<br/>Properties in Dubai</h2></div>
+    <div className="properties-intro"><p>Discover high-demand residential and investment properties in Dubai’s fastest-growing areas.<br/>Our featured listings highlight the best deals, exclusive launches, and limited-time offers from trusted developers.</p><a href="https://giffyrealestate.com/projects/" target="_blank" rel="noreferrer">View all projects <ArrowUpRight size={14}/></a></div>
    </div>
    <div className="property-grid">{[featuredProperties.slice(0,2),featuredProperties.slice(2)].map((row,rowIndex)=><div className={`property-row property-row-${rowIndex+1}`} key={rowIndex}>{row.map((property,index)=><a key={property.name} className="property-card reveal-item" style={{'--reveal-delay':`${120+(rowIndex*2+index)*90}ms`}} href={property.href} target="_blank" rel="noreferrer">
     <div className="property-image"><img src={property.image} alt={property.alt} loading="lazy"/><span className="property-tag"><i/> {property.tag}</span><span className="property-open"><ArrowUpRight size={17}/></span></div>
@@ -172,6 +183,26 @@ function App() {
     <span className="property-note">Starting from</span>
    </a>)}</div>)}</div>
   </section>
+  <div className="stacked-panels">
+   <section className="neighborhoods-section stack-panel reveal" id="neighborhoods" aria-labelledby="neighborhoods-title">
+    <div className="neighborhoods-heading">
+     <div><span className="section-index">NEIGHBORHOODS</span><h2 id="neighborhoods-title">where we work,<br/>and why it matters.</h2></div>
+     <p>We know Dubai’s communities street by street, bringing local insight to every search.</p>
+    </div>
+    <div className="neighborhoods-content">
+     <div className="neighborhood-list">{neighborhoods.map(area=><article className="neighborhood-item reveal-item" key={area.number}>
+      <span className="neighborhood-number">{area.number}</span><div><h3>{area.name}</h3><p>{area.description}</p></div><ArrowUpRight className="neighborhood-arrow" size={16}/>
+     </article>)}</div>
+     <figure className="neighborhood-photo reveal-item"><img src="/images/projects/marquis-vista.png" alt="Contemporary residential architecture in Dubai" loading="lazy"/><figcaption><span>Thoughtful homes in Dubai.</span><span>Dubai / Giffy</span></figcaption><span className="neighborhood-tag"><i/> Local insight, considered living</span></figure>
+    </div>
+   </section>
+   <section className="approach-section stack-panel reveal" id="our-approach" aria-labelledby="approach-title">
+    <div className="approach-heading"><span className="section-index">THE APPROACH</span><h2 id="approach-title">we know Dubai by neighborhood,<br/>and guide every move with care.</h2></div>
+    <div className="approach-grid">{approachPoints.map(point=><article className="approach-card reveal-item" key={point.number}>
+     <span className="approach-number">{point.number}</span><h3>{point.title}</h3><p>{point.description}</p><div className="approach-metric"><strong>{point.metric}</strong><span>{point.caption}</span></div>
+    </article>)}</div>
+   </section>
+  </div>
   {telemetryEnabled && <><Analytics/><SpeedInsights/></>}
   <dialog ref={contactDialog} className="contact-dialog" onClick={e=>{if(e.target===contactDialog.current)contactDialog.current.close()}}><div className="dialog-content"><button className="dialog-close" aria-label="Close dialog" onClick={()=>contactDialog.current.close()}><X/></button><span className="eyebrow">YOUR NEXT CHAPTER</span><h2>{intent}</h2><p>Tell our Dubai team what you have in mind. We’ll help you explore the next step.</p><a className="button dialog-action" href={`mailto:info@giffyrealestate.com?subject=${encodeURIComponent(intent)}`}>Email our team <ArrowUpRight size={17}/></a><a className="whatsapp" href="https://wa.me/971522656819" target="_blank" rel="noreferrer">Chat on WhatsApp <ArrowUpRight size={16}/></a><a className="phone" href="tel:+97145703395">+971 4 570 3395</a></div></dialog>
   <dialog ref={reviewDialog} className="reviews-dialog" onClick={e=>{if(e.target===reviewDialog.current)reviewDialog.current.close()}}><div className="dialog-content"><button className="dialog-close" aria-label="Close reviews" onClick={()=>reviewDialog.current.close()}><X/></button><span className="google-label"><span className="google-g">G</span> Google reviews</span><h2>Excellent, in your words.</h2><div className="review-dialog-rating"><Stars/><span>Based on 12 reviews</span></div><article className="review-card" aria-live="polite"><div className="reviewer"><span className="reviewer-avatar" style={{background:review.color}}>{review.initial}</span><strong>{review.name}</strong><BadgeCheck size={17}/></div><Stars/><p>{review.text}</p></article><div className="review-footer"><span><BadgeCheck size={15}/> Verified by Trustindex</span><div><button aria-label="Previous review" onClick={()=>setReviewIndex((reviewIndex+2)%3)}><ChevronLeft size={20}/></button><button aria-label="Next review" onClick={()=>setReviewIndex((reviewIndex+1)%3)}><ChevronRight size={20}/></button></div></div><a className="original-reviews" href="https://giffyrealestate.com/" target="_blank" rel="noreferrer">View reviews on Giffy’s website <ArrowUpRight size={14}/></a></div></dialog>
