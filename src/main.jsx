@@ -68,6 +68,83 @@ function Brand() {
  return <a className="brand" href="#home" aria-label="Giffy Real Estate home"><img src="/images/giffy-logo.png" alt="Giffy Real Estate" width="2330" height="807"/></a>;
 }
 function Stars() { return <span className="stars" aria-label="5 out of 5 stars">{[0,1,2,3,4].map(i=><Star key={i} size={15} fill="currentColor" strokeWidth={0}/>)}</span>; }
+const serviceCards = [
+ { title: 'Property To Buy', text: 'Find the best ready and off-plan properties across Dubai, carefully selected for quality, ROI, and long-term value.' },
+ { title: 'Property To Sell', text: 'Sell your property faster with professional marketing, accurate valuation, and access to qualified buyers across Dubai.' },
+ { title: 'Property Management', text: 'Enjoy hassle-free ownership with full property management, tenant handling, maintenance, and rental supervision.' },
+ { title: 'Off-Plan Properties', text: 'Unlock early-stage investment opportunities with flexible payment plans from top Dubai developers.' }
+];
+function ServicesScroll({ onEnquire }) {
+ const sectionRef = useRef(null);
+ const trackRef = useRef(null);
+ useEffect(() => {
+  const section = sectionRef.current, track = trackRef.current;
+  let frame = 0, travel = 0;
+  const update = () => {
+   frame = 0;
+   const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--site-header-height')) || 58;
+   const distance = Math.min(travel, Math.max(0, header - section.getBoundingClientRect().top));
+   track.style.transform = `translate3d(${-distance}px,0,0)`;
+  };
+  const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
+  const measure = () => {
+   travel = Math.max(0, track.scrollWidth - track.parentElement.clientWidth);
+   section.style.setProperty('--services-travel', `${travel}px`);
+   schedule();
+  };
+  const observer = new ResizeObserver(measure);
+  observer.observe(track.parentElement);
+  observer.observe(track);
+  window.addEventListener('scroll', schedule, { passive: true });
+  window.addEventListener('resize', measure);
+  measure();
+  return () => { observer.disconnect(); window.removeEventListener('scroll', schedule); window.removeEventListener('resize', measure); cancelAnimationFrame(frame); };
+ }, []);
+ return <section ref={sectionRef} className="services-scroll-section" id="services" aria-labelledby="services-scroll-title"><div className="services-scroll-pin"><header className="services-scroll-heading"><span>OUR SERVICES</span><h2 id="services-scroll-title">OUR REAL ESTATE<br/>SERVICES IN DUBAI.</h2><p>Get expert support for buying, selling, investing, and managing properties across Dubai. Giffy Real Estate LLC provides end-to-end solutions tailored to homeowners, investors, and international buyers.</p></header><div className="services-scroll-window"><div className="services-scroll-track" ref={trackRef}>{serviceCards.map((service,index)=><article className="services-scroll-card" key={service.title}><span className="services-card-number">{String(index+1).padStart(2,'0')}</span><div><h3>{service.title}</h3><p>{service.text}</p><button onClick={()=>onEnquire(service.title)}>Learn more <ArrowUpRight size={14}/></button></div></article>)}</div></div><span className="services-scroll-note">SCROLL TO EXPLORE ALL SERVICES <span aria-hidden="true">→</span></span></div></section>;
+}
+function ProjectsHeadline() {
+ const sectionRef = useRef(null);
+ const lineRef = useRef(null);
+ const text = 'Discover the art of living through our finest projects';
+ useEffect(() => {
+  const section = sectionRef.current, line = lineRef.current;
+  const letters = [...line.querySelectorAll('.projects-headline-letter')];
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let frame = 0, travel = 0;
+  const update = () => {
+   frame = 0;
+   const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--site-header-height')) || 58;
+   const rect = section.getBoundingClientRect();
+   const entrance = Math.min(1, Math.max(0, (window.innerHeight * .85 - rect.top) / (window.innerHeight * .55)));
+   letters.forEach((letter,index) => {
+    const delay = (index % 7) * .035;
+    const progress = reduced ? 1 : Math.min(1, Math.max(0, (entrance - delay) / (1 - delay)));
+    const remaining = Math.pow(1 - progress, 3);
+    const x = [120,-90,60,-140,0][index % 5] * remaining;
+    const y = [-170,150,-100,130,-200][index % 5] * remaining;
+    const rotation = [18,-15,12,-20,9][index % 5] * remaining;
+    letter.style.transform = `translate3d(${x}px,${y}px,0) rotate(${rotation}deg)`;
+    letter.style.opacity = String(Math.min(1, progress * 3));
+   });
+   const distance = Math.min(travel, Math.max(0, header - rect.top));
+   line.style.transform = `translate3d(${-distance}px,0,0)`;
+  };
+  const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
+  const measure = () => {
+   travel = Math.max(0, line.scrollWidth - line.parentElement.clientWidth);
+   section.style.setProperty('--headline-travel', `${travel}px`);
+   schedule();
+  };
+  const observer = new ResizeObserver(measure);
+  observer.observe(line); observer.observe(line.parentElement);
+  window.addEventListener('scroll', schedule, { passive: true });
+  window.addEventListener('resize', measure);
+  document.fonts.ready.then(measure);
+  measure();
+  return () => { observer.disconnect(); window.removeEventListener('scroll', schedule); window.removeEventListener('resize', measure); cancelAnimationFrame(frame); };
+ }, []);
+ return <section className="projects-headline-section" ref={sectionRef} aria-labelledby="projects-headline-title"><div className="projects-headline-pin"><h2 id="projects-headline-title" className="projects-headline-window" aria-label={text}><span ref={lineRef} className="projects-headline-line" aria-hidden="true">{text.split(' ').map((word,wordIndex)=><React.Fragment key={wordIndex}><span className="projects-headline-word">{[...word].map((letter,index)=><span className="projects-headline-letter" key={index}>{letter}</span>)}</span>{wordIndex < text.split(' ').length-1 ? ' ' : null}</React.Fragment>)}</span></h2></div></section>;
+}
 function App() {
  const [menuOpen, setMenuOpen] = useState(false);
  const [contactOpen, setContactOpen] = useState(false);
@@ -199,20 +276,13 @@ function App() {
    <section className="reference-card reference-leadership" id="our-experience" aria-labelledby="reference-leadership-title">
     <div className="reference-leadership-brand">◇ GIFFY<br/><small>REAL ESTATE</small></div>
     <img className="reference-portrait" src="/images/giffy-ceo.jpg" alt="Gift Preye Solomon, founder and CEO of Giffy Real Estate" loading="lazy"/>
-    <div className="reference-leadership-copy"><span className="reference-dots" aria-hidden="true">•<br/>•<br/>•<br/>•</span><h2 id="reference-leadership-title">Experiences<br/>Over Things<br/><strong>Always.</strong></h2><p>a considered approach / by GIFFY REAL ESTATE</p></div>
-    <span className="reference-project-count"><b>02</b> / 03 &nbsp;&nbsp; OUR LEADERSHIP ›</span>
-    <aside className="reference-abstract"><Search className="reference-search" size={16}/><span className="reference-lines"/><div><h3>ABSTRACT</h3><p>Thoughtful guidance, personal connections, and local insight. A considered perspective on life and property in Dubai.</p>{[['PHOTOGRAPHY','13 December 2019','/images/projects/sunset-bay.jpg'],['INTERIOR','20 November 2019','/images/about-residence.jpg'],['EXTERIOR','12 November 2019','/images/dubai-skyline.jpg']].map(([title,date,src])=><article key={title}><img src={src} alt=""/><div><strong>{title}</strong><span>{date}</span></div></article>)}</div><span className="reference-care">DESIGNED WITH LOVE AND CARE</span><div className="reference-social"><a href="https://facebook.com/giffyrealestate">f</a><a href="https://instagram.com/giffyrealestate">◎</a></div></aside>
+    <div className="reference-leadership-copy experience-copy-content"><span className="experience-eyebrow">Our Experience</span><h2 id="reference-leadership-title">With A Decade Of Experience, We're Experts At Getting It Right The First Time.</h2><p>Giffy Real Estate LLC is a leading real estate company in Dubai, offering a premium portfolio of luxury and high-end properties. Our mission is to provide every client with an exceptional, seamless, and personalized experience—whether you are buying, selling, or investing in Dubai’s rapidly growing property market.</p><button className="experience-view-more" onClick={()=>inquire('Learn more about Giffy Real Estate')}>View More <ArrowUpRight size={15}/></button></div>
+    <span className="reference-project-count"><b>02</b> / 03 &nbsp;&nbsp; OUR EXPERIENCE ›</span>
+    <aside className="reference-abstract experience-aside"><div><h3>EXPERIENCE THAT COUNTS</h3><p>A decade of market knowledge. Personal guidance for every move. Lasting relationships built on trust.</p><dl className="experience-figures"><div><dt>500+</dt><dd>Happy Clients</dd></div><div><dt>250+</dt><dd>Exclusive Listings</dd></div><div><dt>15+</dt><dd>Developer Partnerships</dd></div></dl></div><span className="reference-care">LOCAL KNOWLEDGE. PERSONAL SERVICE.</span><div className="reference-social"><a href="https://facebook.com/giffyrealestate" aria-label="Giffy on Facebook">f</a><a href="https://instagram.com/giffyrealestate" aria-label="Giffy on Instagram">◎</a></div></aside>
    </section>
-   <section className="reference-card reference-explore" id="services" aria-labelledby="reference-explore-title">
-    <div className="reference-masthead">giffy<span>collective</span></div>
-    <img className="reference-building" src="/images/extracted-reference-building.png" alt="White concrete cantilever and teal glass facade extracted from the reference" loading="lazy"/>
-    <h2 id="reference-explore-title">explore<br/>the future</h2>
-    <div className="reference-project"><strong>03&nbsp;&nbsp; Dubai.</strong><i/><p>Considered spaces, new perspectives, and a thoughtful approach to the places we call home.</p></div>
-    <span className="reference-edge">architecture</span><span className="reference-ticks">—<br/>—<br/>▦</span>
-    <button className="reference-photos" onClick={()=>inquire('Explore our properties')}>more photos <ArrowUpRight size={15}/></button>
-    <nav className="reference-bottom" aria-label="Explore links"><a href="#featured-properties">photos</a><a href="#property-management">property management</a><button onClick={()=>inquire('Contact Giffy')}>contacts</button></nav>
-   </section>
+   <ServicesScroll onEnquire={inquire}/>
   </div>
+  <ProjectsHeadline/>
   </div>
   {contactMounted&&<section className={`contact-page${contactOpen?' contact-page-entered':''}`} role="dialog" aria-modal="true" aria-labelledby="contact-title"><div className="contact-page-content"><div className="contact-page-top"><button className="contact-menu" onClick={closeContact}><Menu size={17}/> <span>Back to Giffy</span></button><Brand/></div><h1 id="contact-title">CONTACT</h1><div className="contact-details"><p className="contact-intro">For enquiries, or just to say hello, get in touch and contact us.</p><div className="contact-detail-grid"><div><span>New projects</span><a href="mailto:info@giffyrealestate.com">info@giffyrealestate.com</a></div><div><span>General enquiries</span><a href="mailto:info@giffyrealestate.com">info@giffyrealestate.com</a><a href="tel:+97145703395">+971 4 570 3395</a></div><div><span>Address</span><p>Prime Tower<br/>Business Bay, Dubai</p></div><div><span>Careers &amp; Partnerships</span><a href="https://wa.me/971522656819" target="_blank" rel="noreferrer">Chat with our team</a></div><div><span>Call us</span><a href="tel:+97145703395">+971 4 570 3395</a></div><div><span>Follow us</span><div className="contact-social"><a href="https://instagram.com/giffyrealestate" target="_blank" rel="noreferrer">IG</a><a href="https://facebook.com/giffyrealestate" target="_blank" rel="noreferrer">FB</a><a href="https://linkedin.com/company/giffy-real-estate" target="_blank" rel="noreferrer">IN</a></div></div></div></div><span className="contact-footnote">{intent || 'A considered way to live.'} / DUBAI</span></div><figure className="contact-page-image"><img src="/images/about-residence.jpg" alt="A welcoming modern residence with warm natural light"/><figcaption>GIFFY REAL ESTATE / DUBAI</figcaption></figure><button className="contact-close" onClick={closeContact} aria-label="Close contact page"><X size={19}/></button></section>}
   {telemetryEnabled && <><Analytics/><SpeedInsights/></>}
