@@ -54,7 +54,7 @@ export default function PageRouter({ renderPage }) {
    const anchor=event.target.closest('a[href]');
    if(!anchor || event.defaultPrevented || event.button!==0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || anchor.target==='_blank' || anchor.hasAttribute('download')) return;
    const url=new URL(anchor.href,location.href);
-   if(url.origin!==location.origin || !sitePaths.includes(normalizePath(url.pathname))) return;
+   if(url.origin!==location.origin || (!sitePaths.includes(normalizePath(url.pathname)) && !/^\/projects\/[^/]+$/.test(normalizePath(url.pathname)))) return;
    event.preventDefault();change(url.href);
   };
   const pop = () => change(location.href,false);

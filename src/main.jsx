@@ -10,6 +10,7 @@ import { SiteErrorBoundary } from './ErrorScreens.jsx';
 import { ConsultationProvider } from './ConsultationModal.jsx';
 import PageRouter from './PageRouter.jsx';
 import ProjectsPage, { ProjectsMenu } from './ProjectsPage.jsx';
+import { allProjects } from './projects-data.js';
 
 const navigation = ['Home', 'Projects', 'Sell', 'Rent', 'Services', 'About Giffy'];
 const reviews = [
@@ -383,4 +384,4 @@ function App() {
   <dialog ref={reviewDialog} className="reviews-dialog" onClick={e=>{if(e.target===reviewDialog.current)reviewDialog.current.close()}}><div className="dialog-content"><button className="dialog-close" aria-label="Close reviews" onClick={()=>reviewDialog.current.close()}><X/></button><span className="google-label"><span className="google-g">G</span> Google reviews</span><h2>Excellent, in your words.</h2><div className="review-dialog-rating"><Stars/><span>Based on 12 reviews</span></div><article className="review-card" aria-live="polite"><div className="reviewer"><span className="reviewer-avatar" style={{background:review.color}}>{review.initial}</span><strong>{review.name}</strong><BadgeCheck size={17}/></div><Stars/><p>{review.text}</p></article><div className="review-footer"><span><BadgeCheck size={15}/> Verified by Trustindex</span><div><button aria-label="Previous review" onClick={()=>setReviewIndex((reviewIndex+2)%3)}><ChevronLeft size={20}/></button><button aria-label="Next review" onClick={()=>setReviewIndex((reviewIndex+1)%3)}><ChevronRight size={20}/></button></div></div><a className="original-reviews" href="https://giffyrealestate.com/" target="_blank" rel="noreferrer">View reviews on Giffy’s website <ArrowUpRight size={14}/></a></div></dialog>
  </>;
 }
-createRoot(document.getElementById('root')).render(<SiteErrorBoundary><ConsultationProvider><PageRouter renderPage={path=>path.startsWith('/projects')?<ProjectsPage projects={featuredProperties} byDeveloper={path.replace(/\/+$/,'')==='/projects/developers'}/>:<App/>}/></ConsultationProvider></SiteErrorBoundary>);
+createRoot(document.getElementById('root')).render(<SiteErrorBoundary><ConsultationProvider><PageRouter renderPage={path=>path.startsWith('/projects')?<ProjectsPage projects={allProjects} byDeveloper={path.replace(/\/+$/,'')==='/projects/developers'} selectedProject={allProjects.find(project=>project.path===path.replace(/\/+$/,''))}/>:<App/>}/></ConsultationProvider></SiteErrorBoundary>);
