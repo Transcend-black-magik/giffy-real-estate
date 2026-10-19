@@ -28,6 +28,12 @@ const aboutStories = [
     caption: 'A city full of possibility.'
   }
 ];
+const featuredProperties = [
+  { number: '01', name: 'Sunset Bay Grand', price: 'AED 1.95M', image: '/images/projects/sunset-bay.jpg', alt: 'Warm contemporary dining interior at Sunset Bay Grand', href: 'https://giffyrealestate.com/projects/sunset-bay-grand-by-imtiaz/', tag: 'Featured launch' },
+  { number: '02', name: 'Golf Hills EMAAR South', price: 'AED 1.06M', image: '/images/projects/golf-hills.png', alt: 'A resident looking out over a landscaped community at sunset', href: 'https://giffyrealestate.com/projects/grand-polo-club-resort-living/', tag: 'Dubai South' },
+  { number: '03', name: 'Equestra Grand Polo', price: 'AED 1.06M', image: '/images/projects/equestra.png', alt: 'Equestrian community at Equestra Grand Polo', href: 'https://giffyrealestate.com/projects/equestra-grand-polo-club-resort-living/', tag: 'New release' },
+  { number: '04', name: 'Marquis Vista', price: 'AED 661,000', image: '/images/projects/marquis-vista.png', alt: 'Marquis Vista contemporary residential development', href: 'https://giffyrealestate.com/projects/marquis-vista-2/', tag: 'Just listed' }
+];
 function CountUp({ from, to, label }) {
   const [value, setValue] = useState(from);
   useEffect(() => {
@@ -82,36 +88,33 @@ function App() {
  const [intent, setIntent] = useState('');
  const [reviewIndex, setReviewIndex] = useState(0);
  const [aboutIndex, setAboutIndex] = useState(0);
- const [aboutLeaving, setAboutLeaving] = useState(false);
  const [aboutArriving, setAboutArriving] = useState(false);
+ const [aboutDirection, setAboutDirection] = useState(1);
  const aboutTimer = useRef(null);
  const aboutStory = aboutStories[aboutIndex];
  const changeAboutStory = direction => {
-   if (aboutLeaving) return;
-   setAboutLeaving(true);
+   setAboutDirection(direction);
    window.clearTimeout(aboutTimer.current);
-   aboutTimer.current = window.setTimeout(() => {
-     setAboutIndex(index => (index + direction + aboutStories.length) % aboutStories.length);
-     setAboutLeaving(false);
-     setAboutArriving(true);
-     window.setTimeout(() => setAboutArriving(false), 650);
-   }, 360);
+   setAboutArriving(false);
+   setAboutIndex(index => (index + direction + aboutStories.length) % aboutStories.length);
+   requestAnimationFrame(() => setAboutArriving(true));
+   aboutTimer.current = window.setTimeout(() => setAboutArriving(false), 750);
  };
  useEffect(() => () => window.clearTimeout(aboutTimer.current), []);
  const contactDialog = useRef(null);
  const reviewDialog = useRef(null);
  const inquire = purpose => { setMenuOpen(false); setIntent(purpose); contactDialog.current.showModal(); };
- const navigate = (e, label) => { if (label === 'About Giffy' || label === 'Home') { setMenuOpen(false); } else { e.preventDefault(); inquire(label); } };
+ const navigate = (e, label) => { if (label === 'About Giffy' || label === 'Home' || label === 'Projects') { setMenuOpen(false); } else { e.preventDefault(); inquire(label); } };
  const review = reviews[reviewIndex];
  return <>
   <div className="page-frame"><main className="hero-shell" id="home">
    <header className="site-header">
     <div className="enter header-brand" style={{'--delay':'40ms'}}><Brand/></div>
-    <nav className="desktop-nav" aria-label="Main navigation">{navigation.map((label,i)=><a className="enter" style={{'--delay':`${110+i*55}ms`}} href={label === 'About Giffy' ? '#about-giffy' : '#home'} key={label} onClick={e=>navigate(e,label)}>{label}</a>)}</nav>
+    <nav className="desktop-nav" aria-label="Main navigation">{navigation.map((label,i)=><a className="enter" style={{'--delay':`${110+i*55}ms`}} href={label === 'About Giffy' ? '#about-giffy' : label === 'Projects' ? '#featured-properties' : '#home'} key={label} onClick={e=>navigate(e,label)}>{label}</a>)}</nav>
     <button className="button header-contact enter" style={{'--delay':'460ms'}} onClick={()=>inquire('Contact Giffy')}>Contact us</button>
     <button className="menu-toggle enter" style={{'--delay':'460ms'}} aria-label={menuOpen?'Close menu':'Open menu'} aria-expanded={menuOpen} aria-controls="mobile-navigation" onClick={()=>setMenuOpen(!menuOpen)}>{menuOpen?<X/>:<Menu/>}</button>
    </header>
-   {menuOpen&&<nav className="mobile-navigation" id="mobile-navigation" aria-label="Mobile navigation">{navigation.map(label=><a href={label === 'About Giffy' ? '#about-giffy' : '#home'} key={label} onClick={e=>navigate(e,label)}>{label}<ArrowUpRight size={18}/></a>)}</nav>}
+   {menuOpen&&<nav className="mobile-navigation" id="mobile-navigation" aria-label="Mobile navigation">{navigation.map(label=><a href={label === 'About Giffy' ? '#about-giffy' : label === 'Projects' ? '#featured-properties' : '#home'} key={label} onClick={e=>navigate(e,label)}>{label}<ArrowUpRight size={18}/></a>)}</nav>}
    <section className="hero-body" aria-labelledby="hero-title">
     <div className="hero-copy">
      <p className="hero-eyebrow enter" style={{'--delay':'500ms'}}>GIFFY REAL ESTATE <span aria-hidden="true">/</span> DUBAI</p>
@@ -148,15 +151,26 @@ function App() {
     </div>
    </div>
   </section>
-  <section className={`about-section reveal${aboutLeaving?' about-leaving':''}${aboutArriving?' about-arriving':''}`} id="about-giffy" aria-labelledby="about-title">
+  <section className={`about-section reveal${aboutArriving?' about-arriving':''}${aboutDirection<0?' about-reverse':''}`} id="about-giffy" aria-labelledby="about-title">
    <div className="about-section-label reveal-item" style={{'--reveal-delay':'0ms'}}><span>01</span> ABOUT GIFFY</div>
-   <h2 id="about-title" key={`title-${aboutIndex}`} className="about-statement reveal-item about-slide" style={{'--reveal-delay':'120ms'}}>{aboutStory.title}</h2>
+   <h2 id="about-title" key={`title-${aboutIndex}`} className="about-statement about-carousel-item">{aboutStory.title}</h2>
    <div className="about-seal reveal-item" style={{'--reveal-delay':'240ms'}} aria-hidden="true"><span>GIFFY REAL ESTATE</span><img src="/images/giffy-logo.png" alt="" width="2330" height="807"/><span>DUBAI / PERSONAL GUIDANCE</span></div>
-   <div key={`story-${aboutIndex}`} className="about-story reveal-item about-slide" style={{'--reveal-delay':'340ms'}}><span className="about-line" aria-hidden="true"/><p>{aboutStory.description}</p><button className="text-link" onClick={()=>inquire('Meet Giffy Real Estate')}>Get to know Giffy <ArrowUpRight size={14}/></button></div>
+   <div key={`story-${aboutIndex}`} className="about-story about-carousel-item"><span className="about-line" aria-hidden="true"/><p>{aboutStory.description}</p><button className="text-link" onClick={()=>inquire('Meet Giffy Real Estate')}>Get to know Giffy <ArrowUpRight size={14}/></button></div>
    <span className="about-asterisks reveal-item" style={{'--reveal-delay':'420ms'}} aria-hidden="true">&#10035; &#10035; &#10035;</span>
-   <figure key={`photo-${aboutIndex}`} className="about-photo reveal-item about-slide" style={{'--reveal-delay':'480ms'}}><img src={aboutStory.image} alt={aboutStory.alt} loading="lazy" width="900" height="1100"/><figcaption><span>{aboutStory.caption}</span><span>Dubai / Giffy</span></figcaption></figure>
+   <figure key={`photo-${aboutIndex}`} className="about-photo about-carousel-item"><img src={aboutStory.image} alt={aboutStory.alt} loading="lazy" width="900" height="1100"/><figcaption><span>{aboutStory.caption}</span><span>Dubai / Giffy</span></figcaption></figure>
    <button className="about-top-link reveal-item" style={{'--reveal-delay':'550ms'}} onClick={()=>changeAboutStory(-1)} aria-label="Previous Giffy story"><ChevronLeft size={18}/></button>
    <button className="about-next-link reveal-item" style={{'--reveal-delay':'400ms'}} onClick={()=>changeAboutStory(1)} aria-label="Next Giffy story"><ChevronRight size={18}/></button>
+  </section>
+  <section className="properties-section reveal" id="featured-properties" aria-labelledby="properties-title">
+   <div className="properties-heading">
+    <div><span className="section-index">A CURATED SELECTION / DUBAI</span><h2 id="properties-title">A curated set,<br/>shown by appointment.</h2></div>
+    <div className="properties-intro"><p>Explore a selection of Giffy property opportunities, chosen for different ambitions and ways of living.</p><a href="https://giffyrealestate.com/projects/" target="_blank" rel="noreferrer">View all projects <ArrowUpRight size={14}/></a></div>
+   </div>
+   <div className="property-grid">{[featuredProperties.slice(0,2),featuredProperties.slice(2)].map((row,rowIndex)=><div className={`property-row property-row-${rowIndex+1}`} key={rowIndex}>{row.map((property,index)=><a key={property.name} className="property-card reveal-item" style={{'--reveal-delay':`${120+(rowIndex*2+index)*90}ms`}} href={property.href} target="_blank" rel="noreferrer">
+    <div className="property-image"><img src={property.image} alt={property.alt} loading="lazy"/><span className="property-tag"><i/> {property.tag}</span><span className="property-open"><ArrowUpRight size={17}/></span></div>
+    <div className="property-meta"><div><span className="property-number">{property.number}</span><h3>{property.name}</h3></div><strong>{property.price}</strong></div>
+    <span className="property-note">Starting from</span>
+   </a>)}</div>)}</div>
   </section>
   {telemetryEnabled && <><Analytics/><SpeedInsights/></>}
   <dialog ref={contactDialog} className="contact-dialog" onClick={e=>{if(e.target===contactDialog.current)contactDialog.current.close()}}><div className="dialog-content"><button className="dialog-close" aria-label="Close dialog" onClick={()=>contactDialog.current.close()}><X/></button><span className="eyebrow">YOUR NEXT CHAPTER</span><h2>{intent}</h2><p>Tell our Dubai team what you have in mind. We’ll help you explore the next step.</p><a className="button dialog-action" href={`mailto:info@giffyrealestate.com?subject=${encodeURIComponent(intent)}`}>Email our team <ArrowUpRight size={17}/></a><a className="whatsapp" href="https://wa.me/971522656819" target="_blank" rel="noreferrer">Chat on WhatsApp <ArrowUpRight size={16}/></a><a className="phone" href="tel:+97145703395">+971 4 570 3395</a></div></dialog>
