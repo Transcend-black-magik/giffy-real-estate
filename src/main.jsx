@@ -70,7 +70,6 @@ function Brand() {
 function Stars() { return <span className="stars" aria-label="5 out of 5 stars">{[0,1,2,3,4].map(i=><Star key={i} size={15} fill="currentColor" strokeWidth={0}/>)}</span>; }
 function App() {
  const [menuOpen, setMenuOpen] = useState(false);
- const [headerCompact, setHeaderCompact] = useState(false);
  const [contactOpen, setContactOpen] = useState(false);
  const [contactMounted, setContactMounted] = useState(false);
  const contactCloseTimer = useRef(null);
@@ -79,7 +78,6 @@ function App() {
    return Boolean(connection?.saveData || /(^|-)2g|3g/.test(connection?.effectiveType || '') || (connection?.downlink && connection.downlink < 1.5));
  });
  const [autoplayVideos] = useState(() => !lowBandwidth && !window.matchMedia('(prefers-reduced-motion: reduce)').matches);
- useEffect(() => { const desktop = window.matchMedia('(min-width: 901px)'); const updateHeader = () => { const compact = desktop.matches && window.scrollY > 72; setHeaderCompact(compact); document.documentElement.classList.toggle('header-compact', compact); }; updateHeader(); window.addEventListener('scroll', updateHeader, { passive: true }); desktop.addEventListener('change', updateHeader); return () => { window.removeEventListener('scroll', updateHeader); desktop.removeEventListener('change', updateHeader); document.documentElement.classList.remove('header-compact'); }; }, []);
  const videoRefs = useRef([]);
  const playExclusively = current => { videoRefs.current.forEach(video => { if (video && video !== current) video.pause(); }); };
  useEffect(() => {
@@ -125,7 +123,7 @@ function App() {
  const review = reviews[reviewIndex];
  return <>
   <div className={`page-transition-view${contactOpen?' page-view-away':''}`} aria-hidden={contactOpen} inert={contactOpen}><div className="page-frame"><main className="hero-shell" id="home">
-   <header className={`site-header${headerCompact?' header-compact':''}`}>
+   <header className="site-header">
     <div className="enter header-brand" style={{'--delay':'40ms'}}><Brand/></div>
     <nav className="desktop-nav" aria-label="Main navigation">{navigation.map((label,i)=><a className="enter" style={{'--delay':`${110+i*55}ms`}} href={label === 'About Giffy' ? '#about-giffy' : label === 'Projects' ? '#featured-properties' : '#home'} key={label} onClick={e=>navigate(e,label)}>{label}</a>)}</nav>
     <button className="button header-contact enter" style={{'--delay':'460ms'}} onClick={()=>inquire('Contact Giffy')}>Contact us</button>
@@ -147,7 +145,9 @@ function App() {
     <div className="hero-visual video-showcase enter" style={{'--delay':'1700ms'}} aria-label="Stories from Giffy Real Estate">
      <figure className="video-card enter" style={{'--delay':'1850ms'}}>
       <video ref={element => { videoRefs.current[0] = element; }} onPlay={event => playExclusively(event.currentTarget)} src={`/videos/giffy-award${lowBandwidth ? '-low' : ''}.mp4`} poster="/videos/giffy-award-poster.jpg" controls autoPlay={autoplayVideos} muted loop playsInline preload={lowBandwidth ? 'none' : 'metadata'} aria-label="Giffy Real Estate Binghatti award video"><a href="https://giffyrealestate.com/wp-content/uploads/2026/07/Giffy-Binghatti-Award.mp4">Watch the Giffy Binghatti award video</a></video>
-      <figcaption>Giffy × Binghatti</figcaption>
+      <figcaption>
+        Giffy × Binghatti
+      </figcaption>
      </figure>
      <figure className="video-card enter" style={{'--delay':'2010ms'}}>
       <video ref={element => { videoRefs.current[1] = element; }} onPlay={event => playExclusively(event.currentTarget)} src={`/videos/giffy-story${lowBandwidth ? '-low' : ''}.mp4`} poster="/videos/giffy-story-poster.jpg" controls muted loop playsInline preload="none" aria-label="Gift's story at Giffy Real Estate"><a href="https://giffyrealestate.com/wp-content/uploads/2026/07/Ms-Gift-Story.mp4">Watch Gift's story</a></video>
@@ -189,19 +189,28 @@ function App() {
     <span className="property-note">Starting from</span>
    </a>)}</div>)}</div>
   </section>
-  <div className="stacked-panels">
-   <section className="stack-panel creative-architecture" id="services" aria-labelledby="services-title">
-    <div className="creative-top"><Brand/><span>GIFFY REAL ESTATE</span><button className="creative-menu" onClick={()=>inquire('Explore Giffy Real Estate')}><Menu size={16}/> Menu</button></div>
-    <span className="creative-side-label">DUBAI / REAL ESTATE</span><span className="creative-side-count">01 ? 03</span>
-    <div className="architecture-copy"><span className="section-index">OUR SERVICES / DUBAI</span><h2 id="services-title">explore<br/>the future</h2><p>Find a home or investment that moves you forward. We bring clarity, care, and local insight to every Dubai property decision.</p><button className="creative-cta" onClick={()=>inquire('Explore property opportunities')}>Explore properties <ArrowUpRight size={15}/></button></div>
-    <figure className="architecture-image"><img src="/images/explore-building.jpg" alt="Angular glass-and-concrete architecture with a dramatic cantilever" loading="lazy"/><figcaption>01 / A new perspective on Dubai living</figcaption></figure>
-    <div className="architecture-footer"><span>BUY</span><span>SELL</span><span>INVEST</span><span>PROPERTY CARE</span></div>
+  <div className="reference-stack">
+   <section className="reference-card craft-section management-craft" id="property-management" aria-labelledby="craft-title">
+    <div className="craft-ribbon" aria-hidden="true">{Array.from({length:8},(_,i)=><span key={i}>HASSLE-FREE OWNERSHIP <b>✳</b> PROPERTY MANAGEMENT IN DUBAI <b>✳</b></span>)}</div>
+    <header className="craft-heading"><span className="craft-eyebrow">01 / PROPERTY MANAGEMENT</span><h2 id="craft-title">Hassle-Free Property<br/>Management in <em>Dubai.</em></h2><div><p>Enjoy worry-free ownership with our end-to-end property management services. We keep your property occupied, well-maintained, and consistently profitable.</p><button onClick={()=>inquire('Get started with property management')}>GET STARTED <ArrowUpRight size={10}/></button></div></header>
+    <div className="craft-body"><figure><img src="/images/dubai-skyline.jpg" alt="Burj Khalifa and Downtown Dubai above illuminated roads at sunset" loading="lazy"/><figcaption><span>YOUR PROPERTY, OUR PRIORITY</span><span>DUBAI / GIFFY REAL ESTATE</span></figcaption></figure><div className="craft-details">{[['List &','Prepare','We inspect your property, set the right rental price, and get it ready for tenants. From presentation to pricing, every detail helps attract the right people.'],['Manage &','Maintain','We handle tenant communication, rent collection, and all maintenance needs. Our end-to-end service covers inspections and day-to-day care, so ownership stays simple.'],['Report &','Support','You receive clear monthly updates while we manage everything end-to-end. Stay informed about your property, rental income, and ongoing maintenance with support whenever you need it.']].map(([first,second,copy],index)=><article key={first}><h3>{first}<br/>{second}</h3><p>{copy}</p><button className={index===0?'craft-detail-active':''} aria-label={`Enquire about ${first} ${second}`} onClick={()=>inquire(`Property management: ${first} ${second}`)}><ArrowUpRight size={14}/></button></article>)}</div></div>
+    <div className="craft-ribbon craft-ribbon-bottom" aria-hidden="true">{Array.from({length:8},(_,i)=><span key={i}>LIST &amp; PREPARE <b>✳</b> MANAGE &amp; MAINTAIN <b>✳</b> REPORT &amp; SUPPORT <b>✳</b></span>)}</div>
    </section>
-   <section className="stack-panel creative-story" id="property-management" aria-labelledby="story-title">
-    <div className="story-white"><div className="creative-top"><Brand/><span>THE GIFFY STORY</span><button className="creative-menu" onClick={()=>inquire('Our story')}><Menu size={16}/> Menu</button></div><span className="story-vertical">DUBAI / PERSONAL GUIDANCE</span><span className="story-watermark">02</span><div className="story-copy"><span className="section-index">A PERSONAL APPROACH</span><h2 id="story-title">The Story.</h2><p>Behind every move is a personal story. We pair deep Dubai market knowledge with thoughtful, one-to-one guidance, so your next chapter begins with confidence.</p><button className="text-link" onClick={()=>inquire('Meet Giffy')}>Get to know Giffy <ArrowUpRight size={14}/></button><div className="story-social"><a href="https://instagram.com/giffyrealestate" target="_blank" rel="noreferrer">Instagram</a><span>?</span><a href="https://giffyrealestate.com/" target="_blank" rel="noreferrer">Giffy Real Estate</a></div></div><span className="story-grid-mark" aria-hidden="true"/></div><div className="story-dark"><button className="story-menu-button" onClick={()=>inquire('Explore Giffy')} aria-label="Open contact page"><Menu/></button><span className="story-progress">02 <i/> 03</span><div className="story-film"><img src="/images/story-reference.jpg" alt="A Christmas tree beside a desktop monitor in a softly lit room"/><span>Giffy / Dubai</span></div><span className="story-arrows" aria-hidden="true">?<br/>?</span></div>
+   <section className="reference-card reference-leadership" id="our-experience" aria-labelledby="reference-leadership-title">
+    <div className="reference-leadership-brand">◇ GIFFY<br/><small>REAL ESTATE</small></div>
+    <img className="reference-portrait" src="/images/giffy-ceo.jpg" alt="Gift Preye Solomon, founder and CEO of Giffy Real Estate" loading="lazy"/>
+    <div className="reference-leadership-copy"><span className="reference-dots" aria-hidden="true">•<br/>•<br/>•<br/>•</span><h2 id="reference-leadership-title">Experiences<br/>Over Things<br/><strong>Always.</strong></h2><p>a considered approach / by GIFFY REAL ESTATE</p></div>
+    <span className="reference-project-count"><b>02</b> / 03 &nbsp;&nbsp; OUR LEADERSHIP ›</span>
+    <aside className="reference-abstract"><Search className="reference-search" size={16}/><span className="reference-lines"/><div><h3>ABSTRACT</h3><p>Thoughtful guidance, personal connections, and local insight. A considered perspective on life and property in Dubai.</p>{[['PHOTOGRAPHY','13 December 2019','/images/projects/sunset-bay.jpg'],['INTERIOR','20 November 2019','/images/about-residence.jpg'],['EXTERIOR','12 November 2019','/images/dubai-skyline.jpg']].map(([title,date,src])=><article key={title}><img src={src} alt=""/><div><strong>{title}</strong><span>{date}</span></div></article>)}</div><span className="reference-care">DESIGNED WITH LOVE AND CARE</span><div className="reference-social"><a href="https://facebook.com/giffyrealestate">f</a><a href="https://instagram.com/giffyrealestate">◎</a></div></aside>
    </section>
-   <section className="stack-panel creative-founder" id="our-experience" aria-labelledby="founder-title">
-    <div className="founder-white"><div className="creative-top"><Brand/><span>GIFFY REAL ESTATE / 03</span><button className="creative-menu" onClick={()=>inquire('Contact Giffy')}><Menu size={16}/> Menu</button></div><div className="founder-copy"><span className="section-index">LEADERSHIP / DUBAI</span><h2 id="founder-title">Experiences<br/>Over Things<br/><strong>Always.</strong></h2><p className="founder-tagline">a considered approach / by Giffy Real Estate</p></div><span className="founder-counter">04 / 06&nbsp;&nbsp; FOURTH PROJECT <ArrowUpRight size={13}/></span></div><figure className="founder-photo"><img src="/images/giffy-ceo.jpg" alt="Gift Preye Solomon, Founder and CEO of Giffy Real Estate" loading="lazy"/><figcaption>GIFFY REAL ESTATE / DUBAI</figcaption></figure><aside className="founder-aside"><Search className="founder-search" size={15}/><span className="founder-menu-line"/><div className="founder-aside-content"><span className="section-index">ABSTRACT</span><p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem totam rem aperiam, eaque ipsa quae ab inventore architecto beatae vitae dicta.</p><div className="founder-feature-list"><article><img src="/images/projects/sunset-bay.jpg" alt=""/><div><strong>PHOTOGRAPHY</strong><span>13 December 2019</span></div></article><article><img src="/images/about-residence.jpg" alt=""/><div><strong>INTERIOR</strong><span>20 November 2019</span></div></article><article><img src="/images/dubai-skyline.jpg" alt=""/><div><strong>EXTERIOR</strong><span>12 November 2019</span></div></article></div></div><span className="founder-side-text">DESIGNED WITH LOVE AND CARE</span><div className="founder-social">IG&nbsp;&nbsp;&nbsp; IN</div></aside>
+   <section className="reference-card reference-explore" id="services" aria-labelledby="reference-explore-title">
+    <div className="reference-masthead">giffy<span>collective</span></div>
+    <img className="reference-building" src="/images/extracted-reference-building.png" alt="White concrete cantilever and teal glass facade extracted from the reference" loading="lazy"/>
+    <h2 id="reference-explore-title">explore<br/>the future</h2>
+    <div className="reference-project"><strong>03&nbsp;&nbsp; Dubai.</strong><i/><p>Considered spaces, new perspectives, and a thoughtful approach to the places we call home.</p></div>
+    <span className="reference-edge">architecture</span><span className="reference-ticks">—<br/>—<br/>▦</span>
+    <button className="reference-photos" onClick={()=>inquire('Explore our properties')}>more photos <ArrowUpRight size={15}/></button>
+    <nav className="reference-bottom" aria-label="Explore links"><a href="#featured-properties">photos</a><a href="#property-management">property management</a><button onClick={()=>inquire('Contact Giffy')}>contacts</button></nav>
    </section>
   </div>
   </div>
