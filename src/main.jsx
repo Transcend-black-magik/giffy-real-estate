@@ -7,6 +7,7 @@ import { SpeedInsights } from '@vercel/speed-insights/react';
 import './styles.css';
 import { siteFooterMarkup } from './site-chrome.js';
 import { SiteErrorBoundary } from './ErrorScreens.jsx';
+import { ConsultationProvider } from './ConsultationModal.jsx';
 import PageRouter from './PageRouter.jsx';
 import ProjectsPage, { ProjectsMenu } from './ProjectsPage.jsx';
 
@@ -283,8 +284,8 @@ function App() {
  const reviewDialog = useRef(null);
  const inquire = purpose => { setMenuOpen(false); setIntent(purpose); window.clearTimeout(contactCloseTimer.current); setContactMounted(true); requestAnimationFrame(() => setContactOpen(true)); };
  useEffect(()=>{
-  const open=()=>inquire('Speak to an advisor');
-  if(window.location.pathname.replace(/\/+$/,'')==='/contact') open();
+  const open=event=>inquire(event?.detail || new URLSearchParams(window.location.search).get('service') || 'Speak to an advisor');
+  if(window.location.pathname.replace(/\/+$/,'')==='/contact' && !new URLSearchParams(location.search).has('consultation')) open();
   window.addEventListener('giffy:contact',open);
   return ()=>window.removeEventListener('giffy:contact',open);
  }, []);
@@ -297,11 +298,11 @@ function App() {
   <div className={`page-transition-view${contactOpen?' page-view-away':''}`} aria-hidden={contactOpen} inert={contactOpen}><div className="page-frame"><main className="hero-shell" id="home">
    <header className="site-header">
     <div className="enter header-brand" style={{'--delay':'40ms'}}><Brand/></div>
-    <nav className="desktop-nav" aria-label="Main navigation">{navigation.map((label,i)=>label==='Projects'?<ProjectsMenu key={label}/>:<a className="enter" style={{'--delay':`${110+i*55}ms`}} href={navigationTarget(label)} key={label} onClick={e=>navigate(e,label)}>{label}</a>)}</nav>
+    <nav className="desktop-nav" aria-label="Main navigation">{navigation.map((label,i)=>['Projects','Services'].includes(label)?<ProjectsMenu key={label} label={label}/>:<a className="enter" style={{'--delay':`${110+i*55}ms`}} href={navigationTarget(label)} key={label} onClick={e=>navigate(e,label)}>{label}</a>)}</nav>
     <button className="button header-contact enter" style={{'--delay':'460ms'}} onClick={()=>inquire('Contact Giffy')}>Contact us</button>
     <button className="menu-toggle enter" style={{'--delay':'460ms'}} aria-label={menuOpen?'Close menu':'Open menu'} aria-expanded={menuOpen} aria-controls="mobile-navigation" onClick={()=>setMenuOpen(!menuOpen)}>{menuOpen?<X/>:<Menu/>}</button>
    </header>
-   {menuOpen&&<nav className="mobile-navigation" id="mobile-navigation" aria-label="Mobile navigation">{navigation.map(label=>label==='Projects'?<React.Fragment key={label}><a href="/projects">All Projects <ArrowUpRight size={18}/></a><a href="/projects/developers">By developers <ArrowUpRight size={18}/></a></React.Fragment>:<a href={navigationTarget(label)} key={label} onClick={e=>navigate(e,label)}>{label}<ArrowUpRight size={18}/></a>)}</nav>}
+   {menuOpen&&<nav className="mobile-navigation" id="mobile-navigation" aria-label="Mobile navigation">{navigation.map(label=>['Projects','Services'].includes(label)?<ProjectsMenu key={label} label={label} mobile onNavigate={()=>setMenuOpen(false)}/>:<a href={navigationTarget(label)} key={label} onClick={e=>navigate(e,label)}>{label}<ArrowUpRight size={18}/></a>)}</nav>}
    <section className="hero-body" aria-labelledby="hero-title">
     <div className="hero-copy">
      <p className="hero-eyebrow enter" style={{'--delay':'500ms'}}>GIFFY REAL ESTATE <span aria-hidden="true">/</span> DUBAI</p>
@@ -377,4 +378,4 @@ function App() {
   <dialog ref={reviewDialog} className="reviews-dialog" onClick={e=>{if(e.target===reviewDialog.current)reviewDialog.current.close()}}><div className="dialog-content"><button className="dialog-close" aria-label="Close reviews" onClick={()=>reviewDialog.current.close()}><X/></button><span className="google-label"><span className="google-g">G</span> Google reviews</span><h2>Excellent, in your words.</h2><div className="review-dialog-rating"><Stars/><span>Based on 12 reviews</span></div><article className="review-card" aria-live="polite"><div className="reviewer"><span className="reviewer-avatar" style={{background:review.color}}>{review.initial}</span><strong>{review.name}</strong><BadgeCheck size={17}/></div><Stars/><p>{review.text}</p></article><div className="review-footer"><span><BadgeCheck size={15}/> Verified by Trustindex</span><div><button aria-label="Previous review" onClick={()=>setReviewIndex((reviewIndex+2)%3)}><ChevronLeft size={20}/></button><button aria-label="Next review" onClick={()=>setReviewIndex((reviewIndex+1)%3)}><ChevronRight size={20}/></button></div></div><a className="original-reviews" href="https://giffyrealestate.com/" target="_blank" rel="noreferrer">View reviews on Giffy’s website <ArrowUpRight size={14}/></a></div></dialog>
  </>;
 }
-createRoot(document.getElementById('root')).render(<SiteErrorBoundary><PageRouter renderPage={path=>path.startsWith('/projects')?<ProjectsPage projects={featuredProperties} byDeveloper={path.replace(/\/+$/,'')==='/projects/developers'}/>:<App/>}/></SiteErrorBoundary>);
+createRoot(document.getElementById('root')).render(<SiteErrorBoundary><ConsultationProvider><PageRouter renderPage={path=>path.startsWith('/projects')?<ProjectsPage projects={featuredProperties} byDeveloper={path.replace(/\/+$/,'')==='/projects/developers'}/>:<App/>}/></ConsultationProvider></SiteErrorBoundary>);

@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { ArrowUpRight } from 'lucide-react';
+import React, { useEffect, useState, useId } from 'react';
+import { ArrowUpRight, ChevronDown } from 'lucide-react';
 import { siteHeaderMarkup, siteFooterMarkup } from './site-chrome.js';
+import { navigationMenus } from './navigation-menus.js';
 
-export function ProjectsMenu() {
+export function ProjectsMenu({ label='Projects', mobile=false, onNavigate }) {
  const [open,setOpen]=useState(false);
- return <div className="projects-nav-menu" onMouseEnter={()=>setOpen(true)} onMouseLeave={()=>setOpen(false)} onBlur={event=>{if(!event.currentTarget.contains(event.relatedTarget))setOpen(false);}} onKeyDown={event=>{if(event.key==='Escape')setOpen(false);}}><button className="projects-nav-trigger" aria-expanded={open} aria-controls="projects-dropdown" onClick={()=>setOpen(!open)}>Projects <span aria-hidden="true">⌄</span></button><div id="projects-dropdown" className={`projects-nav-dropdown${open?' projects-menu-open':''}`} inert={!open}><a href="/projects" onClick={()=>setOpen(false)}>All Projects <ArrowUpRight size={13}/></a><a href="/projects/developers" onClick={()=>setOpen(false)}>By developers <ArrowUpRight size={13}/></a></div></div>;
+ const id=useId();
+ return <div className={`projects-nav-menu${mobile?' mobile-nav-group':''}`} onMouseEnter={()=>{if(!mobile && matchMedia('(hover: hover)').matches)setOpen(true);}} onMouseLeave={()=>{if(!mobile)setOpen(false);}} onBlur={event=>{if(!event.currentTarget.contains(event.relatedTarget))setOpen(false);}} onKeyDown={event=>{if(event.key==='Escape')setOpen(false);}}><button className="projects-nav-trigger" aria-expanded={open} aria-controls={id} onClick={()=>setOpen(!open)}>{label}<span className="desktop-menu-indicator" aria-hidden="true"/><ChevronDown className="mobile-menu-chevron" size={16}/></button><div id={id} className={`projects-nav-dropdown${open?' projects-menu-open':''}`} inert={!open}>{navigationMenus[label].map(item=><a key={item.label} href={item.href} onClick={()=>{setOpen(false);onNavigate?.();}}>{item.label}{!mobile&&<ArrowUpRight size={13}/>}</a>)}</div></div>;
 }
 
 export default function ProjectsPage({ projects, byDeveloper=false }) {

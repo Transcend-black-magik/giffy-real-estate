@@ -24,7 +24,10 @@ export default function PageRouter({ renderPage }) {
    if(next.hash){next.pathname=legacySections[next.hash.slice(1)]||next.pathname;next.hash='';}
    const same=normalizePath(next.pathname)===normalizePath(window.location.pathname);
    if(same && historyChange) {
-    if(normalizePath(next.pathname)==='/contact') window.dispatchEvent(new Event('giffy:contact'));
+    if(normalizePath(next.pathname)==='/contact') {
+     if(next.search!==location.search) history.replaceState({},'',next.pathname+next.search);
+     window.dispatchEvent(new CustomEvent('giffy:contact',{detail:next.searchParams.get('service')}));
+    }
     else placePage(next.pathname);
     return;
    }
