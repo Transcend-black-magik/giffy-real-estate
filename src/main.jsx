@@ -282,7 +282,7 @@ function App() {
  const [intent, setIntent] = useState('');
  const [reviewIndex, setReviewIndex] = useState(0);
  const reviewDialog = useRef(null);
- const inquire = purpose => { setMenuOpen(false); setIntent(purpose); window.clearTimeout(contactCloseTimer.current); setContactMounted(true); requestAnimationFrame(() => setContactOpen(true)); };
+ const inquire = purpose => { setMenuOpen(false); setIntent(purpose); window.dispatchEvent(new CustomEvent('giffy:consultation',{detail:purpose})); };
  useEffect(()=>{
   const open=event=>inquire(event?.detail || new URLSearchParams(window.location.search).get('service') || 'Speak to an advisor');
   if(window.location.pathname.replace(/\/+$/,'')==='/contact' && !new URLSearchParams(location.search).has('consultation')) open();
