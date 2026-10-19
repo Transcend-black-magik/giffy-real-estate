@@ -15,6 +15,7 @@ function Brand() {
 function Stars() { return <span className="stars" aria-label="5 out of 5 stars">{[0,1,2,3,4].map(i=><Star key={i} size={15} fill="currentColor" strokeWidth={0}/>)}</span>; }
 function App() {
  const [menuOpen, setMenuOpen] = useState(false);
+ const [autoplayVideos] = useState(() => !window.matchMedia('(prefers-reduced-motion: reduce)').matches);
  const [intent, setIntent] = useState('');
  const [reviewIndex, setReviewIndex] = useState(0);
  const contactDialog = useRef(null);
@@ -33,17 +34,26 @@ function App() {
    {menuOpen&&<nav className="mobile-navigation" id="mobile-navigation" aria-label="Mobile navigation">{navigation.map(label=><a href="#home" key={label} onClick={e=>navigate(e,label)}>{label}<ArrowUpRight size={18}/></a>)}</nav>}
    <section className="hero-body" aria-labelledby="hero-title">
     <div className="hero-copy">
-     <p className="hero-eyebrow enter" style={{'--delay':'500ms'}}>GIFFY REAL ESTATE ? DUBAI</p>
+     <p className="hero-eyebrow enter" style={{'--delay':'500ms'}}>GIFFY REAL ESTATE <span aria-hidden="true">/</span> DUBAI</p>
      <h1 id="hero-title"><span className="line"><span className="enter" style={{'--delay':'550ms'}}>Experience smarter</span></span><span className="line"><span className="enter" style={{'--delay':'690ms'}}>real estate investment</span></span><span className="line"><span className="enter" style={{'--delay':'830ms'}}>in Dubai.</span></span></h1>
      <p className="hero-description enter" style={{'--delay':'990ms'}}>Whether you’re an investor, buyer, or seller, Giffy Real Estate LLC delivers unmatched insight into Dubai’s property market. Get expert support for off-plan projects, Golden Visa applications, and end-to-end property management.</p>
-     <div className="hero-actions"><button className="button enter" style={{'--delay':'1140ms'}} onClick={()=>inquire('Book a viewing')}>Book a viewing <ArrowUpRight size={14}/></button><button className="text-link enter" style={{'--delay':'1250ms'}} onClick={()=>inquire('Request a floor plan')}>Request floor plan</button></div>
+     <div className="hero-actions"><button className="button enter" style={{'--delay':'1140ms'}} onClick={()=>inquire('Get started')}>Get started <ArrowUpRight size={14}/></button><button className="text-link enter" style={{'--delay':'1250ms'}} onClick={()=>inquire('Request a floor plan')}>Request floor plan</button></div>
      <button className="review-summary enter" style={{'--delay':'1390ms'}} onClick={()=>reviewDialog.current.showModal()} aria-label="Read Giffy Real Estate Google reviews, excellent, based on 12 reviews">
       <span className="avatar-stack" aria-hidden="true">{reviews.map(r=><span key={r.initial} style={{background:r.color}}>{r.initial}</span>)}</span>
       <span className="review-copy"><span className="review-rating"><Stars/><span className="excellent">Excellent</span></span><span className="review-count">12 Google reviews <BadgeCheck size={12}/></span><small>Verified by Trustindex</small></span>
      </button>
 
     </div>
-    <div className="hero-visual enter" style={{'--delay':'1850ms'}}><img src="/images/dubai-skyline.jpg" alt="Dubai skyline at sunset, featuring Burj Khalifa and illuminated city roads" width="1200" height="800" fetchPriority="high"/><div className="image-label enter" style={{'--delay':'2050ms'}}><span>Dubai, UAE</span><small>A city of possibilities.</small></div></div>
+    <div className="hero-visual video-showcase enter" style={{'--delay':'1700ms'}} aria-label="Stories from Giffy Real Estate">
+     <figure className="video-card enter" style={{'--delay':'1850ms'}}>
+      <video src="https://giffyrealestate.com/wp-content/uploads/2026/07/Giffy-Binghatti-Award.mp4" controls autoPlay={autoplayVideos} muted loop playsInline preload="metadata" aria-label="Giffy Real Estate Binghatti award video"><a href="https://giffyrealestate.com/wp-content/uploads/2026/07/Giffy-Binghatti-Award.mp4">Watch the Giffy Binghatti award video</a></video>
+      <figcaption>Giffy × Binghatti</figcaption>
+     </figure>
+     <figure className="video-card enter" style={{'--delay':'2010ms'}}>
+      <video src="https://giffyrealestate.com/wp-content/uploads/2026/07/Ms-Gift-Story.mp4" controls autoPlay={autoplayVideos} muted loop playsInline preload="metadata" aria-label="Gift's story at Giffy Real Estate"><a href="https://giffyrealestate.com/wp-content/uploads/2026/07/Ms-Gift-Story.mp4">Watch Gift's story</a></video>
+      <figcaption>Our story</figcaption>
+     </figure>
+    </div>
    </section>
    <div className="hero-footer">     <div className="stats" aria-label="About Giffy Real Estate">{[{value:'400+',label:'Happy clients'},{value:'10+',label:'Years of experience'},{value:'Dubai',label:'Local market expertise'}].map((stat,i)=><div className="stat enter" style={{'--delay':`${1530+i*120}ms`}} key={stat.label}><strong>{stat.value}</strong><span>{stat.label}</span></div>)}</div><p className="footer-note enter" style={{'--delay':'1800ms'}}>Personal guidance.<br/>A considered approach to property.</p></div>
   </main></div>
