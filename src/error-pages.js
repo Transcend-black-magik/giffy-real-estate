@@ -37,5 +37,5 @@ export function errorMarkup(code) {
 }
 export function errorDocument(code, css) {
  const page = errorPages[code];
- return `<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,follow"><meta name="theme-color" content="#f7f5f0"><title>${page.label} | Giffy Real Estate</title><link rel="icon" href="/favicon.svg"><style>${css}</style></head><body>${errorMarkup(code)}<script>document.querySelector('[data-error-retry]')?.addEventListener('click',function(){window.location.reload();});</script></body></html>`;
+ return `<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,follow"><meta name="theme-color" content="#f7f5f0"><title>${page.label} | Giffy Real Estate</title><link rel="icon" type="image/png" href="/giffy-favicon.png"><link rel="apple-touch-icon" href="/giffy-favicon.png"><style>${css}</style></head><body>${errorMarkup(code)}<script>document.querySelector('[data-error-retry]')?.addEventListener('click',function(){window.location.reload();});</script></body></html>`;
 }

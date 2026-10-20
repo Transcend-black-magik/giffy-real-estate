@@ -1,6 +1,6 @@
 ﻿import React, { useLayoutEffect, useRef } from 'react';
 import { ArrowUpRight } from 'lucide-react';
-import { siteHeaderMarkup, siteFooterMarkup } from './site-chrome.js';
+import { siteFooterMarkup } from './site-chrome.js';
 import teamMembers from './team-members.json';
 import TestimonialSection from './TestimonialSection.jsx';
 import AboutFaq from './AboutFaq.jsx';
@@ -91,7 +91,6 @@ export default function AboutGiffyPage() {
   return () => { observer.disconnect(); elements.forEach(element => element.classList.remove('about-reveal-ready', 'is-revealed')); };
  }, []);
  return <div className="about-basic-shell">
-  <div dangerouslySetInnerHTML={{ __html: siteHeaderMarkup() }} />
   <main className="about-basic" ref={pageRef}>
    <section className="about-basic-hero"><h1 className="about-title-drop">ABOUT GIFFY</h1></section>
    <div className="about-basic-services about-ownership-strip" aria-label={ownershipMessages.join('. ')} data-about-reveal>

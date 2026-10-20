@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { SiteEntry } from './ErrorScreens.jsx';
 import { sectionRoutes, sitePaths, legacySections, normalizePath } from './routes.js';
+import { siteHeaderMarkup } from './site-chrome.js';
 
 export default function PageRouter({ renderPage }) {
  const [path,setPath] = useState(window.location.pathname);
@@ -43,7 +44,7 @@ export default function PageRouter({ renderPage }) {
      const transition=document.startViewTransition(commit);
      await transition.finished;
     } else if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
-     const surface=document.querySelector('.route-surface');
+     const surface=document.querySelector('.route-content');
      await surface.animate([{transform:'translateX(0)'},{transform:'translateX(-100%)'}],{duration:650,easing:'cubic-bezier(.76,0,.24,1)'}).finished;
      commit();
      await surface.animate([{transform:'translateX(100%)'},{transform:'translateX(0)'}],{duration:900,easing:'cubic-bezier(.22,1,.36,1)'}).finished;
@@ -61,5 +62,8 @@ export default function PageRouter({ renderPage }) {
   document.addEventListener('click',click);window.addEventListener('popstate',pop);
   return ()=>{document.removeEventListener('click',click);window.removeEventListener('popstate',pop);};
  },[]);
- return <div className="route-surface"><SiteEntry key={path}>{renderPage(path)}</SiteEntry></div>;
+ return <>
+  <div className="route-header" data-current-page={normalizePath(path)} dangerouslySetInnerHTML={{__html:siteHeaderMarkup()}}/>
+  <div className="route-surface"><div className="route-content"><SiteEntry key={path}>{renderPage(path)}</SiteEntry></div></div>
+ </>;
 }

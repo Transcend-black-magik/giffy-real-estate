@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from 'react';
-import { siteHeaderMarkup, siteFooterMarkup } from './site-chrome.js';
+import { siteFooterMarkup } from './site-chrome.js';
 
 export default function ContactPage() {
  const [status, setStatus] = useState('');
@@ -15,7 +15,6 @@ export default function ContactPage() {
   setStatus('Your email app will open with your message. Send it there to reach our team.');
  };
  return <div className="giffy-contact-shell">
-  <div dangerouslySetInnerHTML={{ __html: siteHeaderMarkup() }}/>
   <main className="giffy-contact-page">
    <section className="giffy-contact-info" aria-labelledby="giffy-contact-title">
     <h1 id="giffy-contact-title">Get in touch</h1>

@@ -790,3 +790,30 @@ html{scroll-padding-top:calc(var(--site-header-height) + 20px)}
 @media(max-width:600px){.giffy-contact-page{grid-template-columns:1fr;gap:40px;min-height:0;padding:calc(var(--site-header-height,58px) + 40px) 6% 55px}.giffy-contact-info h1{font-size:43px;margin-bottom:28px}.giffy-contact-info address{gap:18px}.giffy-contact-form{gap:21px}.giffy-contact-fields{gap:12px}.giffy-contact-form textarea{min-height:185px}.giffy-contact-info address a,.giffy-contact-info address p{font-size:15px}}
 @media(max-width:360px){.giffy-contact-fields{grid-template-columns:1fr;gap:20px}}
 @media(prefers-reduced-motion:reduce){.giffy-contact-info,.giffy-contact-form{animation:none}}
+/* A single shared header sits outside the sliding route content. */
+.route-header{position:relative;z-index:1000}
+.route-header .site-header{view-transition-name:giffy-site-header}
+.route-content{min-height:100dvh;background:#fff}
+.route-transition::view-transition-old(giffy-site-header),.route-transition::view-transition-new(giffy-site-header){animation:none}
+@media(max-width:900px){
+ .route-header .desktop-nav{display:none}
+ .route-header .header-contact{margin-left:auto}
+ .route-header .error-mobile-menu{display:block;position:relative;margin-left:10px}
+ .route-header .error-mobile-menu>summary{display:grid;place-items:center;list-style:none;width:36px;height:36px;border:1px solid #d9dce1;border-radius:50%;font-size:18px;cursor:pointer;color:#252a34}
+ .route-header .error-mobile-menu>summary::-webkit-details-marker{display:none}
+ .route-header .error-mobile-menu>nav{position:fixed;top:var(--site-header-height,58px);left:5%;right:5%;z-index:1100;padding:10px 20px 16px;background:#fff;border:1px solid #e6e6e6;border-radius:0 0 12px 12px;box-shadow:0 15px 40px #23293620}
+ .route-header .error-mobile-menu>nav>a{display:flex;align-items:center;padding:14px 0;border-bottom:1px solid #eee;font-size:13px;color:#474b53}
+}
+@media(min-width:901px){.route-header .error-mobile-menu{display:none}}
+/* Client story layout: editorial copy left, portrait video right. */
+.about-testimonials{display:grid;grid-template-columns:minmax(0,.9fr) minmax(360px,1fr);gap:clamp(38px,9vw,140px);align-items:center;padding:clamp(70px,9vw,130px) 8%;background:#fff;color:#171a2b}
+.testimonial-intro{max-width:600px}
+.testimonial-intro>span{display:block;margin-bottom:25px;color:#a7744d;font-size:10px;font-weight:600;letter-spacing:.16em}
+.testimonial-intro h2{font-family:'DM Sans','Plus Jakarta Sans',Arial,sans-serif;font-size:clamp(38px,4.7vw,68px);font-weight:450;line-height:1.05;letter-spacing:-.055em;margin:0 0 22px}
+.testimonial-intro h2 em{font-family:Georgia,'Times New Roman',serif;font-weight:400;color:#a7744d}
+.testimonial-intro p{max-width:430px;margin:0;color:#6d7480;font-size:15px;line-height:1.8}
+.testimonial-single{width:min(100%,500px);justify-self:end;margin:0}
+.testimonial-single .testimonial-story{width:100%;aspect-ratio:.78;flex:none;border-radius:16px}
+@media(max-width:700px){.about-testimonials{grid-template-columns:1fr;gap:32px;padding:55px 6% 65px}.testimonial-intro>span{margin-bottom:17px}.testimonial-intro h2{font-size:clamp(36px,10vw,52px)}.testimonial-intro p{font-size:14px}.testimonial-single{width:min(100%,440px);justify-self:center}.testimonial-single .testimonial-story{aspect-ratio:.82}}
+.route-header[data-current-page="/about"] .desktop-nav>a[href="/about"],.route-header[data-current-page^="/projects"] .desktop-nav>.projects-nav-menu:nth-child(2)>summary,.route-header[data-current-page^="/services"] .desktop-nav>.projects-nav-menu:nth-child(3)>summary{color:#a66e32}
+.route-header[data-current-page="/"] .desktop-nav>a[href="/"]{color:#a66e32}

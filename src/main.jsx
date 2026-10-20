@@ -9,12 +9,11 @@ import { siteFooterMarkup } from './site-chrome.js';
 import { SiteErrorBoundary } from './ErrorScreens.jsx';
 import { ConsultationProvider } from './ConsultationModal.jsx';
 import PageRouter from './PageRouter.jsx';
-import ProjectsPage, { ProjectsMenu } from './ProjectsPage.jsx';
+import ProjectsPage from './ProjectsPage.jsx';
 import AboutGiffyPage from './AboutPage.jsx';
 import ContactPage from './ContactPage.jsx';
 import { allProjects } from './projects-data.js';
 
-const navigation = ['Home', 'Projects', 'Sell', 'Rent', 'Services', 'About Giffy'];
 const reviews = [
   { name: 'IbroFX', initial: 'I', color: '#c73b0b', text: 'The transaction was smooth. All thanks to Giffy Real Estate, indeed a reliable broker to work with.' },
   { name: 'Fatima Alanda', initial: 'F', color: '#ac45b6', text: 'The CEO herself is one of the most humble and kindest people I have ever met. She takes care of you as she would of herself. I can only recommend!' },
@@ -89,7 +88,6 @@ function SiteFooter({ onContact }) {
 }
 function App() {
  useEffect(()=>{document.title='Giffy Real Estate — A finer way to live';},[]);
- const [menuOpen, setMenuOpen] = useState(false);
  const [contactOpen, setContactOpen] = useState(false);
  const [contactMounted, setContactMounted] = useState(false);
  const contactCloseTimer = useRef(null);
@@ -301,7 +299,7 @@ function App() {
  const [intent, setIntent] = useState('');
  const [reviewIndex, setReviewIndex] = useState(0);
  const reviewDialog = useRef(null);
- const inquire = purpose => { setMenuOpen(false); setIntent(purpose); window.dispatchEvent(new CustomEvent('giffy:consultation',{detail:purpose})); };
+ const inquire = purpose => { setIntent(purpose); window.dispatchEvent(new CustomEvent('giffy:consultation',{detail:purpose})); };
  useEffect(()=>{
   const open=event=>inquire(event?.detail || new URLSearchParams(window.location.search).get('service') || 'Speak to an advisor');
   if(window.location.pathname.replace(/\/+$/,'')==='/contact' && !new URLSearchParams(location.search).has('consultation')) open();
@@ -310,18 +308,9 @@ function App() {
  }, []);
  const closeContact = () => { setContactOpen(false); window.clearTimeout(contactCloseTimer.current); contactCloseTimer.current = window.setTimeout(() => setContactMounted(false), 720); };
  useEffect(() => { if (!contactMounted) return; const handleEscape = event => { if (event.key === 'Escape') { setContactOpen(false); window.clearTimeout(contactCloseTimer.current); contactCloseTimer.current = window.setTimeout(() => setContactMounted(false), 720); } }; window.addEventListener('keydown', handleEscape); return () => window.removeEventListener('keydown', handleEscape); }, [contactMounted]);
- const navigationTarget = label => ({ Home:'/', Projects:'/projects', Services:'/services', 'About Giffy':'/about' }[label] || '/contact');
- const navigate = (e, label) => { setMenuOpen(false); if (label === 'Sell' || label === 'Rent') { e.preventDefault(); inquire(`${label} a property in Dubai`); } };
  const review = reviews[reviewIndex];
  return <>
   <div className={`page-transition-view${contactOpen?' page-view-away':''}`} aria-hidden={contactOpen} inert={contactOpen}><div className="page-frame"><main className="hero-shell" id="home">
-   <header className="site-header">
-    <div className="enter header-brand" style={{'--delay':'40ms'}}><Brand/></div>
-    <nav className="desktop-nav" aria-label="Main navigation">{navigation.map((label,i)=>['Projects','Services'].includes(label)?<ProjectsMenu key={label} label={label}/>:<a className="enter" style={{'--delay':`${110+i*55}ms`}} href={navigationTarget(label)} key={label} onClick={e=>navigate(e,label)}>{label}</a>)}</nav>
-    <a className="button header-contact enter" style={{'--delay':'460ms'}} href="/contact">Contact us</a>
-    <button className="menu-toggle enter" style={{'--delay':'460ms'}} aria-label={menuOpen?'Close menu':'Open menu'} aria-expanded={menuOpen} aria-controls="mobile-navigation" onClick={()=>setMenuOpen(!menuOpen)}>{menuOpen?<X/>:<Menu/>}</button>
-   </header>
-   {menuOpen&&<nav className="mobile-navigation" id="mobile-navigation" aria-label="Mobile navigation">{navigation.map(label=>['Projects','Services'].includes(label)?<ProjectsMenu key={label} label={label} mobile onNavigate={()=>setMenuOpen(false)}/>:<a href={navigationTarget(label)} key={label} onClick={e=>navigate(e,label)}>{label}<ArrowUpRight size={18}/></a>)}</nav>}
    <section className="hero-body" aria-labelledby="hero-title">
     <div className="hero-copy">
      <p className="hero-eyebrow enter" style={{'--delay':'500ms'}}>GIFFY REAL ESTATE <span aria-hidden="true">/</span> DUBAI</p>

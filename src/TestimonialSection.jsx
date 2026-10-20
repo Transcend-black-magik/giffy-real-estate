@@ -5,7 +5,11 @@ export default function TestimonialSection() {
  const videoRef = useRef(null);
  const [playing, setPlaying] = useState(false);
  return <section className="about-testimonials" aria-labelledby="about-testimonials-title">
-  <h2 id="about-testimonials-title" data-about-reveal>Testimonials</h2>
+  <div className="testimonial-intro" data-about-reveal>
+   <span>CLIENT STORIES / DUBAI</span>
+   <h2 id="about-testimonials-title">Trusted voices.<br/><em>Real property journeys.</em></h2>
+   <p>Hear how considered advice and local knowledge helped our clients move forward with confidence.</p>
+  </div>
   <div className="testimonial-single" data-about-reveal>
    <article className={`testimonial-story${playing ? ' testimonial-is-playing' : ''}`}>
     <video ref={videoRef} src="/videos/testimonial-client.mp4" poster="/videos/testimonial-client-poster.jpg" controls={playing} playsInline preload="none" aria-label="Giffy investor and buyer testimonial" onPlay={() => { document.querySelectorAll('.about-basic video').forEach(video => { if (video !== videoRef.current) video.pause(); }); setPlaying(true); }} onEnded={() => setPlaying(false)} />
