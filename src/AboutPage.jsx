@@ -2,6 +2,8 @@
 import { ArrowUpRight } from 'lucide-react';
 import { siteHeaderMarkup, siteFooterMarkup } from './site-chrome.js';
 import teamMembers from './team-members.json';
+import TestimonialSection from './TestimonialSection.jsx';
+import AboutFaq from './AboutFaq.jsx';
 
 const ownershipMessages = [
  'HASSLE-FREE OWNERSHIP',
@@ -152,7 +154,7 @@ export default function AboutGiffyPage() {
     <div className="about-vlogs-grid">
      {vlogs.map((vlog, index) => <article className="about-vlog-card" key={vlog.src}>
       <h3 data-about-reveal style={{ '--about-delay': `${index * 90}ms` }}>{vlog.title}</h3>
-      <video data-about-reveal style={{ '--about-delay': `${index * 90 + 140}ms` }} controls playsInline preload="none" poster={vlog.poster} aria-label={vlog.title} onPlay={event => { pageRef.current.querySelectorAll('.about-vlogs video').forEach(video => { if (video !== event.currentTarget) video.pause(); }); }}>
+      <video data-about-reveal style={{ '--about-delay': `${index * 90 + 140}ms` }} controls playsInline preload="none" poster={vlog.poster} aria-label={vlog.title} onPlay={event => { pageRef.current.querySelectorAll('video').forEach(video => { if (video !== event.currentTarget) video.pause(); }); }}>
        <source src={vlog.src} type="video/mp4" />
        <a href={vlog.src}>Watch {vlog.title}</a>
       </video>
@@ -160,6 +162,8 @@ export default function AboutGiffyPage() {
      </article>)}
     </div>
    </section>
+   <TestimonialSection />
+   <AboutFaq />
   </main>
   <div ref={footerRef} dangerouslySetInnerHTML={{ __html: siteFooterMarkup() }} />
  </div>;

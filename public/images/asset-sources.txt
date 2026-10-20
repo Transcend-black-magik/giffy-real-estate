@@ -28,3 +28,7 @@ Buying tips: https://giffyrealestate.com/wp-content/uploads/2025/11/home_video_4
 Golden Visa: https://giffyrealestate.com/wp-content/uploads/2025/11/home_video_3.mp4
 Imtiaz event: https://giffyrealestate.com/wp-content/uploads/2026/03/IMT-AWARD.mp4
 Video posters extracted from the corresponding original video frames.
+
+About client testimonial: https://giffyrealestate.com/testimonials/
+Video: https://giffyrealestate.com/wp-content/uploads/2025/12/video_testimonial01.mp4
+Poster extracted from the original video. Only the working testimonial is used; the other source players point to a missing video.

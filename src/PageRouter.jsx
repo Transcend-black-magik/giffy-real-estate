@@ -26,7 +26,7 @@ export default function PageRouter({ renderPage }) {
    if(same && historyChange) {
     if(normalizePath(next.pathname)==='/contact') {
      if(next.search!==location.search) history.replaceState({},'',next.pathname+next.search);
-     window.dispatchEvent(new CustomEvent('giffy:contact',{detail:next.searchParams.get('service')}));
+     placePage(next.pathname);
     }
     else placePage(next.pathname);
     return;
