@@ -881,3 +881,42 @@ html{scroll-padding-top:calc(var(--site-header-height) + 20px)}
 /* A selected link dismisses hover-open dropdowns as well as native details. */
 .route-header .projects-native-menu.menu-dismissed>.projects-nav-dropdown{opacity:0;visibility:hidden;pointer-events:none;translate:0 7px}
 .route-header .error-mobile-menu.menu-dismissed>nav{display:none}
+/* Giffy gold and the owner rental-analysis section. */
+.management-page-shell{--management-gold:#bd8c50;--management-gold-dark:#966b38}
+.management-hero-copy h1 em,.management-features h2{color:var(--management-gold)}
+.management-hero-actions .management-primary{background:var(--management-gold);border-color:var(--management-gold)}
+.management-hero-actions .management-primary:hover{background:var(--management-gold-dark);box-shadow:0 5px 15px #bd8c5025}
+.management-secondary:hover{background:#faf6ef}
+.management-hero-actions a:focus-visible{outline-color:var(--management-gold)}
+.management-feature-icon{color:var(--management-gold);border-color:#bd8c5055;background:#fcf9f3}
+.management-hero-image img{object-position:center}
+.rental-analysis{display:grid;grid-template-columns:.85fr 1.15fr;gap:8%;align-items:start;border-top:1px solid #e9e5dd;margin-top:76px;padding-top:75px;scroll-margin-top:calc(var(--site-header-height) + 25px);background:#fff}
+.rental-analysis-intro>.section-index{display:block;color:#a67b45;font-size:10px;letter-spacing:.14em;margin-bottom:23px}
+.rental-analysis-intro h2{font-family:'DM Sans',Arial,sans-serif;font-size:clamp(35px,4.2vw,56px);font-weight:500;line-height:1.08;letter-spacing:-.045em;margin:0 0 24px;color:#222936}
+.rental-analysis-intro h2 em{font-family:Georgia,serif;font-weight:400;color:var(--management-gold)}
+.rental-analysis-intro>p{font-size:15px;line-height:1.85;color:#717782;margin:0;max-width:445px}
+.rental-analysis-intro ul{list-style:none;padding:0;margin:30px 0;display:grid;gap:14px}
+.rental-analysis-intro li{display:flex;align-items:center;gap:12px;font-size:14px;color:#38404a}
+.rental-analysis-intro li svg{flex:none;background:#bd8c50;color:#fff;border-radius:50%;width:20px;height:20px;padding:4px}
+.rental-analysis-note{border-top:1px solid #e8e4dd;padding-top:24px;margin-top:36px}
+.rental-analysis-note>span{font-size:9px;letter-spacing:.12em;color:#a67b45}
+.rental-analysis-note p{font-size:13px;color:#777e87;line-height:1.7;margin:12px 0 0}
+.rental-analysis-form{min-width:0;background:#fff;border:1px solid #e8e3db;border-radius:20px;padding:32px;box-shadow:0 12px 40px #23293608}
+.rental-form-heading>span{font-size:9px;letter-spacing:.13em;color:#a67b45}
+.rental-form-heading h3{font-size:25px;line-height:1.25;letter-spacing:-.03em;font-weight:500;margin:13px 0 9px}
+.rental-form-heading>p{font-size:13px;line-height:1.6;color:#81858b;margin:0 0 26px}
+.rental-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px 16px}
+.rental-form-grid label{display:flex;flex-direction:column;gap:8px;font-size:12px;color:#414752;position:relative;min-width:0}
+.rental-field-wide{grid-column:1/-1}
+.rental-form-grid label small{position:absolute;right:0;top:0;font-size:10px;color:#96999e}
+.rental-form-grid input,.rental-form-grid select,.rental-form-grid textarea{box-sizing:border-box;width:100%;min-width:0;border:1px solid #e5e3de;border-radius:9px;background:#fafaf9;padding:13px 14px;font:inherit;font-size:14px;line-height:1.5;color:#252b35;transition:border-color .2s,box-shadow .2s,background .2s}
+.rental-form-grid input,.rental-form-grid select{min-height:48px}
+.rental-form-grid textarea{resize:vertical;min-height:110px}
+.rental-form-grid input::placeholder,.rental-form-grid textarea::placeholder{color:#9a9da2}
+.rental-form-grid input:focus,.rental-form-grid select:focus,.rental-form-grid textarea:focus{outline:none;border-color:#bd8c50;background:#fff;box-shadow:0 0 0 3px #bd8c501c}
+.rental-analysis-form>button{display:flex;align-items:center;justify-content:space-between;gap:15px;width:100%;min-height:50px;padding:14px 18px;margin-top:25px;border-radius:9px;background:#bd8c50;color:#fff;font-size:13px;transition:background .2s}
+.rental-analysis-form>button:hover{background:#966b38}
+.rental-analysis-form>button:focus-visible{outline:2px solid #bd8c50;outline-offset:4px}
+.rental-form-status{font-size:11px;color:#8b9097;line-height:1.6;margin:13px 0 0}
+@media(max-width:800px){.rental-analysis{grid-template-columns:1fr;gap:32px;margin-top:50px;padding-top:45px}.rental-analysis-intro>p{max-width:650px}.rental-analysis-note{display:none}.rental-analysis-form{padding:25px}.rental-analysis-intro h2 br{display:none}}
+@media(max-width:480px){.rental-form-grid{grid-template-columns:1fr;gap:17px}.rental-analysis-form{padding:22px 18px;border-radius:14px}.rental-form-grid input,.rental-form-grid select,.rental-form-grid textarea{font-size:16px}.rental-form-heading h3{font-size:23px}}

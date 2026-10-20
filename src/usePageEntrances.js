@@ -5,9 +5,9 @@ export default function usePageEntrances(rootRef, pageKey) {
  useLayoutEffect(() => {
   const root=rootRef.current;
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
-  const targets=[...root.querySelectorAll('h1,h2,h3,p,address,dt,dd,figcaption,label,button,a,video,img,.section-index,.about-basic-label,.developer-directory-title>span,.developer-card-top>span,.management-hero-image')].filter(element => {
+  const targets=[...root.querySelectorAll('h1,h2,h3,p,address,dt,dd,figcaption,label,button,a,video,img,.section-index,.about-basic-label,.developer-directory-title>span,.developer-card-top>span,.management-hero-image,.management-feature-icon')].filter(element => {
    if(element.closest('[aria-hidden="true"],.about-team-track,.about-ownership-track,dialog')) return false;
-   if(element.matches('img') && element.closest('.about-signature-thumbnails,.management-hero-image')) return false;
+   if(element.matches('img') && element.closest('.about-signature-thumbnails,.management-hero-image,.management-feature-icon')) return false;
    if(element.matches('a,button,figcaption') && element.querySelector('h1,h2,h3,p,img,video')) return false;
    return !element.closest('.hero-body,.hero-footer');
   });
@@ -15,14 +15,20 @@ export default function usePageEntrances(rootRef, pageKey) {
   const animations=[];
   const waiting=new Set(targets);
   targets.forEach(element=>element.classList.add('page-entrance-target'));
-  const reveal=elements=>elements.forEach((element,index)=>{
+  const reveal=elements=>{
+   const sectionSteps=new Map();
+   elements.forEach(element=>{
+   const section=element.closest('section,footer')||root;
+   const index=sectionSteps.get(section)||0;
+   sectionSteps.set(section,index+1);
    if(!waiting.delete(element)) return;
    element.classList.add('page-entrance-visible');
    observer?.unobserve(element);
    if(!reduced.matches) animations.push(element.animate([
-    {opacity:0,translate:'0 24px'}, {opacity:1,translate:'0 0'}
-   ],{duration:850,delay:Math.min(index,7)*95,easing:'cubic-bezier(.16,1,.3,1)',fill:'backwards'}));
-  });
+    {opacity:0,translate:'0 20px'}, {opacity:1,translate:'0 0'}
+   ],{duration:850,delay:Math.min(index,7)*110,easing:'cubic-bezier(.16,1,.3,1)',fill:'backwards'}));
+   });
+  };
   const start=()=>{
    cancelAnimationFrame(frame);
    frame=requestAnimationFrame(()=>{
