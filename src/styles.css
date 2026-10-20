@@ -702,3 +702,26 @@ html{scroll-padding-top:calc(var(--site-header-height) + 20px)}
 .about-vlog-card>p{font-size:9px;letter-spacing:.07em;line-height:1.5;color:#828282;margin:18px 0 0}
 @media(max-width:800px){.about-vlogs{padding:40px 5% 55px}.about-vlogs-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:32px 18px}.about-vlog-card h3{font-size:25px}}
 @media(max-width:440px){.about-vlogs-grid{gap:28px 12px}.about-vlog-card h3{font-size:23px;min-height:3.39em;margin-bottom:14px}.about-vlog-card>p{font-size:8px;letter-spacing:.025em}.about-vlogs>h2{margin-bottom:26px}}
+/* Team portraits move inside the stationary curved mask at 70 pixels per second. */
+.about-team-track{display:flex;width:max-content;height:100%;animation:giffy-team-scroll var(--team-loop-duration,48s) linear infinite;will-change:transform}
+.about-team-group{display:flex;gap:clamp(10px,1vw,18px);padding-right:clamp(10px,1vw,18px);height:100%;flex:none}
+.about-team-portrait{position:relative;width:clamp(200px,19vw,350px);height:100%;flex:none;margin:0;overflow:hidden;background:#f1efec}
+.about-team-portrait img{display:block;width:100%;height:100%;object-fit:contain;object-position:center}
+.about-team-portrait figcaption{position:absolute;left:0;right:0;bottom:27%;padding:25px 14px 12px;background:linear-gradient(transparent,#0009);color:#fff}
+.about-team-portrait figcaption strong{display:block;font-size:13px;font-weight:500;line-height:1.4}.about-team-portrait figcaption span{display:block;font-size:10px;line-height:1.5;margin-top:3px;color:#eee}
+@keyframes giffy-team-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media(max-width:600px){.about-team-portrait{width:150px}.about-team-group{gap:8px;padding-right:8px}.about-team-portrait figcaption{padding:18px 8px 7px;bottom:26%}.about-team-portrait figcaption strong{font-size:10px}.about-team-portrait figcaption span{font-size:8px}}
+@media(prefers-reduced-motion:reduce){.about-team-track{animation:none}.about-signature-band:has(.about-team-track){overflow-x:auto}.about-team-track .about-team-group[aria-hidden=true]{display:none}}
+/* Drop the route title from above; photos fit the curved height as they travel. */
+.about-basic-hero h1.about-title-drop{animation:giffy-about-title-drop 1.4s cubic-bezier(.16,1,.3,1) .12s both}
+@keyframes giffy-about-title-drop{from{opacity:0;transform:translateY(-115%)}to{opacity:1;transform:translateY(0)}}
+.about-team-portrait img{position:absolute;left:0;top:var(--portrait-top,0px);height:var(--portrait-height,100%);width:100%;object-fit:cover;object-position:center 22%}
+.about-team-portrait figcaption{bottom:var(--portrait-caption-bottom,27%)}
+@media(prefers-reduced-motion:reduce){.about-basic-hero h1.about-title-drop{animation:none}.about-team-portrait img{top:0;height:100%}}
+/* Polished About headline and staggered downward entrances across this page. */
+.about-basic-hero h1.about-title-drop{font-family:'Sora','Plus Jakarta Sans',Arial,sans-serif;font-weight:500;font-size:clamp(56px,10.5vw,155px);letter-spacing:-.075em;line-height:1.12}
+.about-basic-shell [data-about-reveal]{transition:opacity 1.1s ease,transform 1.25s cubic-bezier(.16,1,.3,1);transition-delay:var(--about-delay,0ms)}
+.about-basic-shell .about-reveal-ready{opacity:0;transform:translateY(-32px)}
+.about-basic-shell .about-reveal-ready.is-revealed{opacity:1;transform:translateY(0)}
+@media(max-width:560px){.about-basic-hero h1.about-title-drop{font-size:12vw;letter-spacing:-.065em}.about-basic-shell .about-reveal-ready{transform:translateY(-22px)}.about-basic-shell .about-reveal-ready.is-revealed{transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){.about-basic-shell [data-about-reveal]{opacity:1;transform:none;transition:none}}

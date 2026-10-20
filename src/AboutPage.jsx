@@ -1,13 +1,7 @@
 ﻿import React, { useLayoutEffect, useRef } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import { siteHeaderMarkup, siteFooterMarkup } from './site-chrome.js';
-
-const images = [
- ['/images/projects/sunset-bay.jpg', 'Refined interiors at Sunset Bay Grand'],
- ['/images/about-residence.jpg', 'A thoughtfully designed Dubai residence'],
- ['/images/projects/golf-hills.png', 'Golf Hills residences overlooking landscaped gardens'],
- ['/images/dubai-skyline.jpg', 'Downtown Dubai and the Burj Khalifa'],
-];
+import teamMembers from './team-members.json';
 
 const ownershipMessages = [
  'HASSLE-FREE OWNERSHIP',
@@ -31,21 +25,74 @@ const vlogs = [
 
 export default function AboutGiffyPage() {
  const pageRef = useRef(null);
+ const footerRef = useRef(null);
+ useLayoutEffect(() => {
+  const track = pageRef.current.querySelector('.about-team-track');
+  const group = track.querySelector('.about-team-group');
+  const band = track.closest('.about-signature-band');
+  const portraits = [...track.querySelectorAll('.about-team-portrait')];
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let frame;
+  // The SVG uses matching cubic x coordinates for both boundaries.
+  const curveAt = x => {
+   x = Math.max(0, Math.min(1, x));
+   let low = 0, high = 1;
+   for (let i = 0; i < 16; i++) {
+    const t = (low + high) / 2;
+    const curveX = 3 * (1 - t) ** 2 * t * .22 + 3 * (1 - t) * t ** 2 * .78 + t ** 3;
+    if (curveX < x) low = t; else high = t;
+   }
+   const t = (low + high) / 2;
+   return { top: .72 * t * (1 - t), bottom: 1 - 1.05 * t * (1 - t) };
+  };
+  const fitPortraits = () => {
+   const bounds = band.getBoundingClientRect();
+   if (bounds.bottom >= 0 && bounds.top <= window.innerHeight) {
+    const measurements = portraits.map(portrait => ({ portrait, bounds: portrait.getBoundingClientRect() }));
+    measurements.forEach(({ portrait, bounds: card }) => {
+     if (card.right < bounds.left || card.left > bounds.right) return;
+     const left = curveAt((card.left - bounds.left) / bounds.width);
+     const right = curveAt((card.right - bounds.left) / bounds.width);
+     const top = Math.min(left.top, right.top) * bounds.height;
+     const bottom = Math.max(left.bottom, right.bottom) * bounds.height;
+     portrait.style.setProperty('--portrait-top', `${Math.max(0, top - 2)}px`);
+     portrait.style.setProperty('--portrait-height', `${bottom - top + 4}px`);
+     portrait.style.setProperty('--portrait-caption-bottom', `${(1 - Math.min(left.bottom, right.bottom)) * bounds.height + 10}px`);
+    });
+   }
+   if (!reducedMotion.matches) frame = requestAnimationFrame(fitPortraits);
+  };
+  const setSpeed = () => track.style.setProperty('--team-loop-duration', `${group.getBoundingClientRect().width / 70}s`);
+  setSpeed();
+  const observer = new ResizeObserver(setSpeed);
+  observer.observe(group);
+  frame = requestAnimationFrame(fitPortraits);
+  return () => { observer.disconnect(); cancelAnimationFrame(frame); };
+ }, []);
  useLayoutEffect(() => {
   document.title = 'About Giffy | Giffy Real Estate';
-  const elements = [...pageRef.current.querySelectorAll('[data-about-reveal]')];
+  const footerElements = [...footerRef.current.querySelectorAll('.classic-footer-columns h2, .classic-footer-columns address, .classic-footer-columns p, .classic-footer-columns li, .footer-brand-socials, .footer-advisor>a, .classic-footer-bottom>span')];
+  footerElements.forEach(element => element.setAttribute('data-about-reveal', ''));
+  const elements = [...pageRef.current.querySelectorAll('[data-about-reveal]'), ...footerElements];
   if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const groups = new Map();
+  elements.forEach(element => {
+   const group = element.closest('.about-vlog-card, .classic-footer-columns>*, section') || element.parentElement;
+   const index = groups.get(group) || 0;
+   if (!element.style.getPropertyValue('--about-delay')) element.style.setProperty('--about-delay', `${Math.min(index * 100, 500)}ms`);
+   groups.set(group, index + 1);
+  });
   const observer = new IntersectionObserver(entries => {
    entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('is-revealed'); observer.unobserve(entry.target); } });
-  }, { threshold: .12 });
+  }, { threshold: .12, rootMargin: '0px 0px -30px 0px' });
   elements.forEach(element => { element.classList.add('about-reveal-ready'); observer.observe(element); });
-  return () => observer.disconnect();
+  return () => { observer.disconnect(); elements.forEach(element => element.classList.remove('about-reveal-ready', 'is-revealed')); };
  }, []);
  return <div className="about-basic-shell">
   <div dangerouslySetInnerHTML={{ __html: siteHeaderMarkup() }} />
   <main className="about-basic" ref={pageRef}>
-   <section className="about-basic-hero"><h1 data-about-reveal>ABOUT US</h1></section>
-   <div className="about-basic-services about-ownership-strip" aria-label={ownershipMessages.join('. ')}>
+   <section className="about-basic-hero"><h1 className="about-title-drop">ABOUT GIFFY</h1></section>
+   <div className="about-basic-services about-ownership-strip" aria-label={ownershipMessages.join('. ')} data-about-reveal>
     <div className="about-ownership-track" aria-hidden="true">
      {[0, 1].map(copy => <div className="about-ownership-group" key={copy}>
       {ownershipMessages.map(message => <span key={message}>{message}<b>✳</b></span>)}
@@ -79,13 +126,20 @@ export default function AboutGiffyPage() {
    </section>
    <section className="about-signature" aria-labelledby="about-signature-title">
     <svg className="about-signature-geometry" width="0" height="0" aria-hidden="true" focusable="false"><defs><clipPath id="giffy-curved-gallery" clipPathUnits="objectBoundingBox"><path d="M0,0 C0.22,0.24 0.78,0.24 1,0 L1,1 C0.78,0.65 0.22,0.65 0,1 Z" /></clipPath></defs></svg>
-    <div className="about-signature-heading" data-about-reveal>
+    <div className="about-signature-heading">
      <span>GIFFY REAL ESTATE / DUBAI</span>
-     <h2 id="about-signature-title">Find a place that reflects<br/>your way of living.</h2>
-     <p>Exceptional homes. Thoughtful guidance.<br/>Discover a new chapter with Giffy.</p>
+     <h2 id="about-signature-title" data-about-reveal>Meet the people who bring<br/>your property goals to life.</h2>
+     <p data-about-reveal>Local knowledge. Personal guidance.<br/>Get to know the people behind Giffy.</p>
     </div>
     <div className="about-signature-band" data-about-reveal>
-     <div className="about-signature-images">{[images[3], ...images, images[0]].map(([src,alt], index) => <a href="/projects" key={`${src}-${index}`} aria-label={`Explore properties: ${alt}`}><img src={src} alt={alt} loading="lazy" /></a>)}</div>
+     <div className="about-team-track">
+      {[0, 1].map(copy => <div className="about-team-group" key={copy} aria-hidden={copy === 1 ? true : undefined}>
+       {teamMembers.map(member => <figure className="about-team-portrait" key={member.name}>
+        <img src={member.src} alt={copy === 0 ? `${member.name}, ${member.role}` : ''} loading="eager" decoding="async" />
+        <figcaption><strong>{member.name}</strong><span>{member.role}</span></figcaption>
+       </figure>)}
+      </div>)}
+     </div>
     </div>
     <div className="about-signature-bottom">
      <div className="about-signature-trust" data-about-reveal><div className="about-signature-thumbnails"><img src="/images/giffy-ceo.jpg" alt=""/><img src="/images/about-series/7163378.jpg" alt=""/><img src="/images/about-series/33342702.jpg" alt=""/></div><div><strong>500+ happy clients</strong><span>A personal approach to every move</span></div></div>
@@ -96,17 +150,17 @@ export default function AboutGiffyPage() {
    <section className="about-vlogs" aria-labelledby="about-vlogs-title">
     <h2 id="about-vlogs-title" data-about-reveal>Vlogs</h2>
     <div className="about-vlogs-grid">
-     {vlogs.map((vlog, index) => <article className="about-vlog-card" key={vlog.src} data-about-reveal style={{ '--about-delay': `${index * 90}ms` }}>
-      <h3>{vlog.title}</h3>
-      <video controls playsInline preload="none" poster={vlog.poster} aria-label={vlog.title} onPlay={event => { pageRef.current.querySelectorAll('.about-vlogs video').forEach(video => { if (video !== event.currentTarget) video.pause(); }); }}>
+     {vlogs.map((vlog, index) => <article className="about-vlog-card" key={vlog.src}>
+      <h3 data-about-reveal style={{ '--about-delay': `${index * 90}ms` }}>{vlog.title}</h3>
+      <video data-about-reveal style={{ '--about-delay': `${index * 90 + 140}ms` }} controls playsInline preload="none" poster={vlog.poster} aria-label={vlog.title} onPlay={event => { pageRef.current.querySelectorAll('.about-vlogs video').forEach(video => { if (video !== event.currentTarget) video.pause(); }); }}>
        <source src={vlog.src} type="video/mp4" />
        <a href={vlog.src}>Watch {vlog.title}</a>
       </video>
-      <p>{vlog.category}</p>
+      <p data-about-reveal style={{ '--about-delay': `${index * 90 + 240}ms` }}>{vlog.category}</p>
      </article>)}
     </div>
    </section>
   </main>
-  <div dangerouslySetInnerHTML={{ __html: siteFooterMarkup() }} />
+  <div ref={footerRef} dangerouslySetInnerHTML={{ __html: siteFooterMarkup() }} />
  </div>;
 }
