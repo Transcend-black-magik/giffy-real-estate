@@ -3,41 +3,14 @@ import { flushSync } from 'react-dom';
 import { SiteEntry } from './ErrorScreens.jsx';
 import { sectionRoutes, sitePaths, legacySections, normalizePath } from './routes.js';
 import { siteHeaderMarkup } from './site-chrome.js';
-
-function replayEntranceAnimations() {
- if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
- const root=document.querySelector('.route-content');
- if(!root) return;
- const isVisible=element=>{
-  const rect=element.getBoundingClientRect();
-  return rect.bottom>0&&rect.top<innerHeight&&rect.right>0&&rect.left<innerWidth;
- };
- const entries=[
-  ['.enter','enter'],
-  ['.about-basic-shell .about-reveal-ready','is-revealed'],
-  ['.projects-page [data-project-enter]','projects-content-visible'],
-  ['.developer-directory [data-developer-enter]','developer-visible'],
- ];
- entries.forEach(([selector,className])=>{
-  root.querySelectorAll(selector).forEach(element=>{
-   if(!isVisible(element)) return;
-   element.classList.remove(className);
-   void element.offsetWidth;
-   requestAnimationFrame(()=>element.classList.add(className));
-  });
- });
- root.querySelectorAll('.about-title-drop,.giffy-contact-info,.giffy-contact-form,.project-detail-visual img,.project-detail-panel').forEach(element=>{
-  if(!isVisible(element)) return;
-  element.style.animation='none';
-  void element.offsetWidth;
-  requestAnimationFrame(()=>element.style.removeProperty('animation'));
- });
- window.dispatchEvent(new CustomEvent('giffy:route-entered'));
-}
+import usePageEntrances from './usePageEntrances.js';
 
 export default function PageRouter({ renderPage }) {
  const [path,setPath] = useState(window.location.pathname);
  const busy = useRef(false);
+ const contentRef=useRef(null);
+ const currentPath=useRef(window.location.pathname);
+ usePageEntrances(contentRef,path);
  const routeOrder = pathname => {
   const normalized=normalizePath(pathname);
   if(normalized==='/') return 0;
@@ -63,7 +36,7 @@ export default function PageRouter({ renderPage }) {
    if (busy.current) return;
    const next=new URL(url,window.location.href);
    if(next.hash){next.pathname=legacySections[next.hash.slice(1)]||next.pathname;next.hash='';}
-   const same=normalizePath(next.pathname)===normalizePath(window.location.pathname);
+   const same=normalizePath(next.pathname)===normalizePath(currentPath.current);
    if(same && historyChange) {
     if(normalizePath(next.pathname)==='/contact') {
      if(next.search!==location.search) history.replaceState({},'',next.pathname+next.search);
@@ -72,11 +45,12 @@ export default function PageRouter({ renderPage }) {
     else placePage(next.pathname);
     return;
    }
-   const direction=routeOrder(next.pathname)<routeOrder(location.pathname)?'backward':'forward';
+   const direction=routeOrder(next.pathname)<routeOrder(currentPath.current)?'backward':'forward';
    busy.current=true;
    document.documentElement.dataset.routeDirection=direction;
    const commit = () => {
     if(historyChange) history.pushState({},'',next.pathname+next.search);
+    currentPath.current=next.pathname;
     flushSync(()=>setPath(next.pathname));
     placePage(next.pathname);
    };
@@ -93,22 +67,26 @@ export default function PageRouter({ renderPage }) {
      commit();
      await surface.animate([{transform:`translateX(${enterX})`},{transform:'translateX(0)'}],{duration:900,easing:'cubic-bezier(.22,1,.36,1)'}).finished;
    } else commit();
-   requestAnimationFrame(replayEntranceAnimations);
-   } finally {busy.current=false;document.documentElement.classList.remove('route-transition');delete document.documentElement.dataset.routeDirection;}
+   contentRef.current.querySelectorAll('.hero-body .enter,.hero-footer .enter').forEach(element=>element.getAnimations().forEach(animation=>{animation.currentTime=0;animation.play();}));
+   } finally {busy.current=false;document.documentElement.classList.remove('route-transition');delete document.documentElement.dataset.routeDirection;window.dispatchEvent(new CustomEvent('giffy:route-entered'));}
   };
   const click = event => {
    const anchor=event.target.closest('a[href]');
    if(!anchor || event.defaultPrevented || event.button!==0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || anchor.target==='_blank' || anchor.hasAttribute('download')) return;
    const url=new URL(anchor.href,location.href);
    if(url.origin!==location.origin || (!sitePaths.includes(normalizePath(url.pathname)) && !/^\/projects\/[^/]+$/.test(normalizePath(url.pathname)))) return;
-   event.preventDefault();change(url.href);
+   event.preventDefault();
+   document.querySelectorAll('.route-header details[open]').forEach(menu=>menu.removeAttribute('open'));
+   change(url.href);
   };
+  const closeMenu=event=>{if(event.key==='Escape'||(event.type==='pointerdown'&&!event.target.closest('.route-header')))document.querySelectorAll('.route-header details[open]').forEach(menu=>menu.removeAttribute('open'));};
+  document.addEventListener('keydown',closeMenu);document.addEventListener('pointerdown',closeMenu);
   const pop = () => change(location.href,false);
   document.addEventListener('click',click);window.addEventListener('popstate',pop);
-  return ()=>{document.removeEventListener('click',click);window.removeEventListener('popstate',pop);};
+  return ()=>{document.removeEventListener('keydown',closeMenu);document.removeEventListener('pointerdown',closeMenu);document.removeEventListener('click',click);window.removeEventListener('popstate',pop);};
  },[]);
  return <>
   <div className="route-header" data-current-page={normalizePath(path)} dangerouslySetInnerHTML={{__html:siteHeaderMarkup()}}/>
-  <div className="route-surface"><div className="route-content"><SiteEntry key={path}>{renderPage(path)}</SiteEntry></div></div>
+  <div className="route-surface"><div className="route-content unified-entrances" ref={contentRef}><SiteEntry key={path}>{renderPage(path)}</SiteEntry></div></div>
  </>;
 }

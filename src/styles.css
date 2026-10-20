@@ -836,3 +836,43 @@ html{scroll-padding-top:calc(var(--site-header-height) + 20px)}
 .giffy-contact-form>button:focus-visible{outline:2px solid #bd8c50;outline-offset:3px}
 .giffy-contact-status{margin:0;color:#898d92;font-size:10px;line-height:1.6}
 @media(max-width:600px){.giffy-contact-fields{gap:14px}.giffy-contact-form input{min-height:50px}.giffy-contact-form textarea{min-height:180px}}
+/* The route entrance controller owns reveals; older observers may still mark visibility. */
+.unified-entrances .about-reveal-ready,.unified-entrances .about-reveal-ready.is-revealed,.unified-entrances .content-entrance,.unified-entrances [data-project-enter],.unified-entrances .developer-directory [data-developer-enter]{opacity:1;transform:none!important;translate:none;animation:none!important;transition:none!important}
+.unified-entrances .editorial-project-image img{transform:none!important;transition:filter .3s!important}
+.unified-entrances .about-title-drop,.unified-entrances .project-detail-panel,.unified-entrances .project-detail-visual img,.unified-entrances .giffy-contact-info,.unified-entrances .giffy-contact-form{animation:none!important}
+.unified-entrances .page-entrance-target:not(.page-entrance-visible){opacity:0!important}
+.unified-entrances .page-entrance-target.page-entrance-visible{opacity:1}
+/* Keep nested mobile dropdowns inside their menu panel at every mobile breakpoint. */
+.hamburger-lines{display:flex;flex-direction:column;gap:4px;width:18px}
+.hamburger-lines i{display:block;width:18px;height:1.5px;background:currentColor;transition:transform .2s,opacity .2s}
+.error-mobile-menu[open] .hamburger-lines i:first-child{transform:translateY(5.5px) rotate(45deg)}
+.error-mobile-menu[open] .hamburger-lines i:nth-child(2){opacity:0}
+.error-mobile-menu[open] .hamburger-lines i:last-child{transform:translateY(-5.5px) rotate(-45deg)}
+@media(max-width:900px){.route-header .error-mobile-menu{position:static}.route-header .error-mobile-menu>nav{display:flex;flex-direction:column;max-height:calc(100dvh - var(--site-header-height) - 20px);overflow:auto}.route-header .error-mobile-menu .projects-nav-menu{display:block;width:100%}.route-header .error-mobile-menu .projects-nav-dropdown{position:static;width:100%;translate:none;visibility:visible;opacity:1}.route-header .error-mobile-menu .projects-nav-menu:not([open])>.projects-nav-dropdown{display:none}}
+@media(prefers-reduced-motion:reduce){.unified-entrances .page-entrance-target:not(.page-entrance-visible){opacity:1}}
+/* Property management: spacious split hero and three service columns. */
+.management-page-shell{background:#fff;color:#111}
+.management-page{max-width:1440px;margin:0 auto;padding:calc(var(--site-header-height,58px) + 48px) 4.5% 55px;font-family:'DM Sans','Plus Jakarta Sans',Arial,sans-serif;scroll-margin-top:var(--site-header-height)}
+.management-hero{display:grid;grid-template-columns:1fr 1fr;gap:8%;align-items:start}
+.management-hero-copy h1{font-family:inherit;font-size:clamp(34px,4.05vw,58px);font-weight:600;line-height:1.33;letter-spacing:-.035em;margin:0 0 25px;width:auto;color:#101312}
+.management-hero-copy h1 em{font-style:normal;color:#008e80}
+.management-hero-copy>p{max-width:470px;font-size:clamp(14px,1.35vw,18px);line-height:1.6;color:#62636a;margin:0 0 31px}
+.management-hero-actions{display:flex;flex-wrap:wrap;gap:15px;align-items:center}
+.management-hero-actions a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 25px;border:1px solid #a3a6a4;border-radius:5px;font-size:14px;line-height:1.5;transition:background .2s,color .2s,box-shadow .2s}
+.management-hero-actions .management-primary{background:#00988b;border-color:#00988b;color:#fff}
+.management-hero-actions .management-primary:hover{background:#007d73;box-shadow:0 5px 15px #008e8025}
+.management-secondary{background:#fff;color:#111}
+.management-secondary:hover{background:#f0f8f6}
+.management-hero-actions a:focus-visible{outline:2px solid #008e80;outline-offset:4px}
+.management-team-proof{margin-top:38px}
+.management-team-avatars{display:flex;padding-left:2px}
+.management-team-avatars img{width:45px;height:45px;border:2px solid #fff;border-radius:50%;object-fit:cover;object-position:center 22%;background:#f0ede8;margin-left:-2px}
+.management-team-proof p{margin:10px 0 0;font-size:12px;line-height:1.6;color:#676970}
+.management-hero-image{margin:0;aspect-ratio:1.06;overflow:hidden;border-radius:22px;background:#e5ecef}
+.management-hero-image img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
+.management-features{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8%;margin-top:48px}
+.management-feature-icon{display:grid;place-items:center;width:43px;height:43px;border:1px solid #a2a7a4;border-radius:50%;color:#343b38;margin-bottom:16px}
+.management-features h2{font-family:inherit;font-size:clamp(16px,1.6vw,21px);font-weight:500;line-height:1.3;letter-spacing:-.015em;margin:0 0 16px;color:#008779}
+.management-features p{font-size:13px;line-height:1.6;color:#696b73;margin:0;max-width:345px}
+@media(min-width:1500px){.management-page{padding-top:calc(var(--site-header-height) + 65px)}.management-hero{gap:9%}.management-team-proof{margin-top:44px}}
+@media(max-width:700px){.management-page{padding:calc(var(--site-header-height,58px) + 32px) 6% 45px}.management-hero{grid-template-columns:1fr;gap:30px}.management-hero-copy h1{font-size:clamp(34px,8vw,48px);line-height:1.2;margin-bottom:20px}.management-hero-copy>p{font-size:15px;margin-bottom:24px}.management-team-proof{margin-top:26px}.management-hero-actions a{font-size:13px;padding:11px 18px;min-height:45px}.management-hero-image{aspect-ratio:1.15;border-radius:17px}.management-features{grid-template-columns:1fr;gap:28px;margin-top:35px}.management-features article{display:grid;grid-template-columns:43px 1fr;column-gap:16px}.management-feature-icon{grid-row:1/3;margin:0}.management-features h2{font-size:19px;margin-bottom:9px}.management-features p{max-width:none;font-size:14px}}
