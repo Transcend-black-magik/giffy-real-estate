@@ -10,7 +10,7 @@ const questions = [
 ];
 
 export default function AboutFaq() {
- const [open, setOpen] = useState(0);
+ const [open, setOpen] = useState(null);
  return <section className="about-faq" aria-labelledby="about-faq-title">
   <div className="about-faq-intro">
    <h2 id="about-faq-title" data-about-reveal>Frequently asked<br/>questions</h2>

@@ -112,7 +112,7 @@
 .gv-process tbody td{font-size:12px;line-height:1.65;padding:20px;border-radius:8px;background:#f5f5f5;color:#7a7a7b;width:36.5%;vertical-align:top}
 .gv-process tbody td:nth-child(2){background:#eeeeee;color:#555555}
 .gv-process td>svg{display:block;color:var(--gv-accent);margin-bottom:9px}
-.gv-reviews{padding:60px 0;background:#f7f7f6}
+.gv-reviews{padding:60px 0;background:#fff}
 .gv-review-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
 .gv-review-grid article{display:flex;flex-direction:column;padding:25px;background:#fff;border-radius:11px;border:1px solid #ececec}
 .gv-stars{display:flex;gap:3px;color:var(--gv-accent);margin-bottom:16px}

@@ -22,6 +22,13 @@ export default function PageRouter({ renderPage }) {
  };
  useEffect(()=>{
   const placePage = pathname => {
+   const story = new URLSearchParams(location.search).get('story');
+   const storyElement = story && document.getElementById(story);
+   if (storyElement) {
+    const headerHeight = document.querySelector('.site-header')?.getBoundingClientRect().height || 58;
+    window.scrollTo({ top: window.scrollY + storyElement.getBoundingClientRect().top - headerHeight, behavior: 'instant' });
+    return;
+   }
    const target = sectionRoutes[normalizePath(pathname)];
    const element = target && document.getElementById(target);
    const header = document.querySelector('.site-header')?.getBoundingClientRect().height || 58;
@@ -38,6 +45,7 @@ export default function PageRouter({ renderPage }) {
    if(next.hash){next.pathname=legacySections[next.hash.slice(1)]||next.pathname;next.hash='';}
    const same=normalizePath(next.pathname)===normalizePath(currentPath.current);
    if(same && historyChange) {
+    if(next.search!==location.search) history.pushState({},'',next.pathname+next.search);
     if(normalizePath(next.pathname)==='/contact') {
      if(next.search!==location.search) history.replaceState({},'',next.pathname+next.search);
      placePage(next.pathname);

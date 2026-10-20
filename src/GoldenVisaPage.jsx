@@ -54,7 +54,7 @@ export default function GoldenVisaPage(){
  useHeroPush(heroSceneRef,heroPinRef,heroContentRef);
  const [tab,setTab]=useState(0);
  const [selected,setSelected]=useState([]);
- const [openFaq,setOpenFaq]=useState(0);
+ const [openFaq,setOpenFaq]=useState(null);
  useLayoutEffect(()=>{document.title='UAE Golden Visa | Giffy Real Estate';},[]);
  useEffect(()=>{
   const preference=window.matchMedia('(prefers-reduced-motion: reduce)');

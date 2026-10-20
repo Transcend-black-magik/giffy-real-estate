@@ -19,10 +19,10 @@ const ownershipMessages = [
 ];
 
 const vlogs = [
- { title: 'Discover Dubai, one home at a time.', category: 'HOME TOURS & LIFESTYLE', src: '/videos/vlog-home-tour.mp4', poster: '/videos/vlog-home-tour-poster.jpg' },
- { title: 'Three property buying mistakes to avoid.', category: 'PROPERTY TIPS', src: '/videos/vlog-golden-visa.mp4', poster: '/videos/vlog-golden-visa-poster.jpg' },
+ { id: 'vlog-featured-properties', title: 'Discover Dubai, one home at a time.', category: 'HOME TOURS & LIFESTYLE', src: '/videos/vlog-home-tour.mp4', poster: '/videos/vlog-home-tour-poster.jpg' },
+ { id: 'vlog-property-management', title: 'Three property buying mistakes to avoid.', category: 'PROPERTY TIPS', src: '/videos/vlog-golden-visa.mp4', poster: '/videos/vlog-golden-visa-poster.jpg' },
  { title: 'Your next chapter: a Golden Visa in Dubai.', category: 'LIVING IN DUBAI', src: '/videos/vlog-property-tips.mp4', poster: '/videos/vlog-property-tips-poster.jpg' },
- { title: 'Celebrating our journey with Imtiaz.', category: 'GIFFY MOMENTS', src: '/videos/vlog-imtiaz-award.mp4', poster: '/videos/vlog-imtiaz-award-poster.jpg' },
+ { id: 'vlog-real-estate-experience', title: 'Celebrating our journey with Imtiaz.', category: 'GIFFY MOMENTS', src: '/videos/vlog-imtiaz-award.mp4', poster: '/videos/vlog-imtiaz-award-poster.jpg' },
 ];
 
 export default function AboutGiffyPage() {
@@ -151,7 +151,7 @@ export default function AboutGiffyPage() {
    <section className="about-vlogs" aria-labelledby="about-vlogs-title">
     <h2 id="about-vlogs-title" data-about-reveal>Vlogs</h2>
     <div className="about-vlogs-grid">
-     {vlogs.map((vlog, index) => <article className="about-vlog-card" key={vlog.src}>
+     {vlogs.map((vlog, index) => <article className="about-vlog-card" id={vlog.id} key={vlog.src}>
       <h3 data-about-reveal style={{ '--about-delay': `${index * 90}ms` }}>{vlog.title}</h3>
       <video data-about-reveal style={{ '--about-delay': `${index * 90 + 140}ms` }} controls playsInline preload="none" poster={vlog.poster} aria-label={vlog.title} onPlay={event => { pageRef.current.querySelectorAll('video').forEach(video => { if (video !== event.currentTarget) video.pause(); }); }}>
        <source src={vlog.src} type="video/mp4" />
