@@ -4,9 +4,38 @@ import { SiteEntry } from './ErrorScreens.jsx';
 import { sectionRoutes, sitePaths, legacySections, normalizePath } from './routes.js';
 import { siteHeaderMarkup } from './site-chrome.js';
 
+function replayEntranceAnimations() {
+ if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+ const root=document.querySelector('.route-content');
+ if(!root) return;
+ const entries=[
+  ['.enter','enter'],
+  ['.about-reveal-ready.is-revealed','is-revealed'],
+  ['.projects-content-visible','projects-content-visible'],
+  ['.developer-visible','developer-visible'],
+ ];
+ entries.forEach(([selector,className])=>{
+  root.querySelectorAll(selector).forEach(element=>{
+   element.classList.remove(className);
+   void element.offsetWidth;
+   requestAnimationFrame(()=>element.classList.add(className));
+  });
+ });
+ window.dispatchEvent(new CustomEvent('giffy:route-entered'));
+}
+
 export default function PageRouter({ renderPage }) {
  const [path,setPath] = useState(window.location.pathname);
  const busy = useRef(false);
+ const routeOrder = pathname => {
+  const normalized=normalizePath(pathname);
+  if(normalized==='/') return 0;
+  if(normalized.startsWith('/projects')) return 1;
+  if(normalized.startsWith('/services')) return 2;
+  if(normalized==='/about') return 3;
+  if(normalized==='/contact') return 4;
+  return 2;
+ };
  useEffect(()=>{
   const placePage = pathname => {
    const target = sectionRoutes[normalizePath(pathname)];
@@ -32,7 +61,9 @@ export default function PageRouter({ renderPage }) {
     else placePage(next.pathname);
     return;
    }
+   const direction=routeOrder(next.pathname)<routeOrder(location.pathname)?'backward':'forward';
    busy.current=true;
+   document.documentElement.dataset.routeDirection=direction;
    const commit = () => {
     if(historyChange) history.pushState({},'',next.pathname+next.search);
     flushSync(()=>setPath(next.pathname));
@@ -45,11 +76,14 @@ export default function PageRouter({ renderPage }) {
      await transition.finished;
     } else if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
      const surface=document.querySelector('.route-content');
-     await surface.animate([{transform:'translateX(0)'},{transform:'translateX(-100%)'}],{duration:650,easing:'cubic-bezier(.76,0,.24,1)'}).finished;
+     const exitX=direction==='forward'?'-100%':'100%';
+     const enterX=direction==='forward'?'100%':'-100%';
+     await surface.animate([{transform:'translateX(0)'},{transform:`translateX(${exitX})`}],{duration:650,easing:'cubic-bezier(.76,0,.24,1)'}).finished;
      commit();
-     await surface.animate([{transform:'translateX(100%)'},{transform:'translateX(0)'}],{duration:900,easing:'cubic-bezier(.22,1,.36,1)'}).finished;
-    } else commit();
-   } finally {busy.current=false;document.documentElement.classList.remove('route-transition');}
+     await surface.animate([{transform:`translateX(${enterX})`},{transform:'translateX(0)'}],{duration:900,easing:'cubic-bezier(.22,1,.36,1)'}).finished;
+   } else commit();
+   requestAnimationFrame(replayEntranceAnimations);
+   } finally {busy.current=false;document.documentElement.classList.remove('route-transition');delete document.documentElement.dataset.routeDirection;}
   };
   const click = event => {
    const anchor=event.target.closest('a[href]');

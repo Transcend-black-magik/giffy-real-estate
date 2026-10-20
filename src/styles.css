@@ -817,3 +817,7 @@ html{scroll-padding-top:calc(var(--site-header-height) + 20px)}
 @media(max-width:700px){.about-testimonials{grid-template-columns:1fr;gap:32px;padding:55px 6% 65px}.testimonial-intro>span{margin-bottom:17px}.testimonial-intro h2{font-size:clamp(36px,10vw,52px)}.testimonial-intro p{font-size:14px}.testimonial-single{width:min(100%,440px);justify-self:center}.testimonial-single .testimonial-story{aspect-ratio:.82}}
 .route-header[data-current-page="/about"] .desktop-nav>a[href="/about"],.route-header[data-current-page^="/projects"] .desktop-nav>.projects-nav-menu:nth-child(2)>summary,.route-header[data-current-page^="/services"] .desktop-nav>.projects-nav-menu:nth-child(3)>summary{color:#a66e32}
 .route-header[data-current-page="/"] .desktop-nav>a[href="/"]{color:#a66e32}
+.route-transition[data-route-direction="backward"]::view-transition-old(root){animation-name:page-slide-away-backward}
+.route-transition[data-route-direction="backward"]::view-transition-new(root){animation-name:page-slide-arrive-backward}
+@keyframes page-slide-away-backward{to{transform:translateX(100%)}}
+@keyframes page-slide-arrive-backward{from{transform:translateX(-100%)}to{transform:translateX(0)}}
