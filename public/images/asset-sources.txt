@@ -34,3 +34,10 @@ Video: https://giffyrealestate.com/wp-content/uploads/2025/12/video_testimonial0
 Poster extracted from the original video. Only the working testimonial is used; the other source players point to a missing video.
 
 property-management.jpg: https://images.pexels.com/photos/7578939/pexels-photo-7578939.jpeg (Pexels, photo 7578939; property ownership model home).
+
+Golden Visa page - matched stock photography (original screenshot source could not be verified):
+golden-visa/consultation.jpg: https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg
+golden-visa/laptop.jpg: https://images.pexels.com/photos/3769021/pexels-photo-3769021.jpeg
+golden-visa/family.jpg: https://images.pexels.com/photos/1128317/pexels-photo-1128317.jpeg
+golden-visa/travel.jpg: https://images.pexels.com/photos/4173227/pexels-photo-4173227.jpeg
+Golden Visa requirements: https://dubailand.gov.ae/en/eservices/request-for-golden-visa-investor/ ; https://icp.gov.ae/en/services/uae-golden-residency/ ; https://dubailand.gov.ae/en/eservices/request-for-investor-visa/

@@ -15,7 +15,7 @@ export default function PageRouter({ renderPage }) {
   const normalized=normalizePath(pathname);
   if(normalized==='/') return 0;
   if(normalized.startsWith('/projects')) return 1;
-  if(normalized.startsWith('/services')) return 2;
+  if(normalized.startsWith('/services')||normalized==='/golden-visa'||normalized==='/property-management') return 2;
   if(normalized==='/about') return 3;
   if(normalized==='/contact') return 4;
   return 2;
