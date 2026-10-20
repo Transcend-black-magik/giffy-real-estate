@@ -12,15 +12,15 @@ export default function GoldenVisaReviews(){
  const [offset,setOffset]=useState(0);
  const [expanded,setExpanded]=useState([]);
  return <section className="gv-google-reviews" aria-label="Giffy Google client reviews">
-  <div className="gv-google-summary"><strong>EXCELLENT</strong><Rating/><span>Based on <b>12 reviews</b></span><span className="gv-google-wordmark" aria-label="Google"><i>G</i><i>o</i><i>o</i><i>g</i><i>l</i><i>e</i></span></div>
-  <div className="gv-google-cards">{reviews.map((_,index)=>{const review=reviews[(index+offset)%reviews.length];const isExpanded=expanded.includes(review.name);return <article className="gv-google-card" key={review.name}>
+  <div className="gv-google-summary" data-entrance="bottom" data-entrance-delay="0"><strong>EXCELLENT</strong><Rating/><span>Based on <b>12 reviews</b></span><span className="gv-google-wordmark" aria-label="Google"><i>G</i><i>o</i><i>o</i><i>g</i><i>l</i><i>e</i></span></div>
+  <div className="gv-google-cards">{reviews.map((_,index)=>{const review=reviews[(index+offset)%reviews.length];const isExpanded=expanded.includes(review.name);return <article className="gv-google-card" key={review.name} data-entrance="bottom" data-entrance-delay={180+index*140}>
    <div className="gv-google-card-top"><span className="gv-google-avatar" style={{background:review.color}}>{review.initial}</span><strong title={review.name}>{review.name}</strong><GoogleMark/></div>
    <div className="gv-google-card-rating"><Rating/><BadgeCheck size={15} fill="#4285f4" color="#fff" aria-label="Google review"/></div>
    <p className={isExpanded?'gv-review-expanded':''} id={`gv-google-review-${review.initial}`}>{review.text}</p>
    <button type="button" className="gv-google-read" aria-expanded={isExpanded} aria-controls={`gv-google-review-${review.initial}`} onClick={()=>setExpanded(current=>isExpanded?current.filter(name=>name!==review.name):[...current,review.name])}>{isExpanded?'Read less':'Read more'}</button>
   </article>;})}</div>
   <button type="button" className="gv-google-next" aria-label="Show next client review" onClick={()=>setOffset(current=>(current+1)%reviews.length)}><ChevronRight size={21}/></button>
-  <a className="gv-google-source" href="https://giffyrealestate.com/" target="_blank" rel="noreferrer">Client reviews shared on Giffy <ArrowIcon/></a>
+  <a className="gv-google-source" data-entrance="bottom" data-entrance-delay="600" href="https://giffyrealestate.com/" target="_blank" rel="noreferrer">Client reviews shared on Giffy <ArrowIcon/></a>
  </section>;
 }
 function ArrowIcon(){return <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M4 12 12 4M4 4h8v8"/></svg>;}

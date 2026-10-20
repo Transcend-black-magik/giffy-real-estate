@@ -15,6 +15,7 @@ import ContactPage from './ContactPage.jsx';
 import PropertyManagementPage from './PropertyManagementPage.jsx';
 import GoldenVisaPage from './GoldenVisaPage.jsx';
 import { allProjects } from './projects-data.js';
+import { openDialogBubble } from './modal-bubble.js';
 
 const reviews = [
   { name: 'IbroFX', initial: 'I', color: '#c73b0b', text: 'The transaction was smooth. All thanks to Giffy Real Estate, indeed a reliable broker to work with.' },
@@ -263,9 +264,10 @@ function App() {
     animate(scenes[0],element,[{opacity:0,translate:'0 20px'},{opacity:1,translate:'0 0'}],650,160+index*105);
    });
    animate(scenes[1],leadership.querySelector('.experience-aside'),[{translate:'100% 0'},{translate:'0 0'}],1150);
+   animate(scenes[1],leadership.querySelector('.experience-copy-content'),[{opacity:0,translate:'-105% 0'},{opacity:1,translate:'0 0'}],1150,250);
    animate(scenes[1],leadership.querySelector('.reference-portrait'),[{translate:desktop.matches?'169.048% 0':'100% 0'},{translate:'0 0'}],1800,1000);
    let leftIndex=0,panelIndex=0;
-   leadership.querySelectorAll('.reference-leadership-brand, .experience-eyebrow, .experience-copy-content h2, .experience-copy-content p, .experience-view-more, .experience-aside h3, .experience-aside p, .experience-figures dt, .experience-figures dd, .reference-care, .reference-project-count, .reference-social a').forEach(element=>{
+   leadership.querySelectorAll('.reference-leadership-brand, .experience-aside h3, .experience-aside p, .experience-figures dt, .experience-figures dd, .reference-care, .reference-project-count, .reference-social a').forEach(element=>{
     const delay=element.closest('.experience-aside')?950+panelIndex++*140:250+leftIndex++*180;
     animate(scenes[1],element,[{opacity:0,translate:'35px 14px'},{opacity:1,translate:'0 0'}],650,delay);
    });
@@ -319,7 +321,7 @@ function App() {
      <h1 id="hero-title"><span className="line"><span className="enter" style={{'--delay':'550ms'}}>Experience smarter</span></span><span className="line"><span className="enter" style={{'--delay':'690ms'}}>real estate investment</span></span><span className="line"><span className="enter" style={{'--delay':'830ms'}}>in Dubai.</span></span></h1>
      <p className="hero-description enter" style={{'--delay':'990ms'}}>Whether you’re an investor, buyer, or seller, Giffy Real Estate LLC delivers unmatched insight into Dubai’s property market. Get expert support for off-plan projects, Golden Visa applications, and end-to-end property management.</p>
      <div className="hero-actions"><a className="button enter" style={{'--delay':'1140ms'}} href="/projects">Explore properties <ArrowUpRight size={14}/></a><button className="text-link enter" style={{'--delay':'1250ms'}} onClick={()=>inquire('Speak to a property advisor')}>Speak to an advisor</button></div>
-     <button className="review-summary enter" style={{'--delay':'1390ms'}} onClick={()=>reviewDialog.current.showModal()} aria-label="Read Giffy Real Estate Google reviews, excellent, based on 12 reviews">
+     <button className="review-summary enter" style={{'--delay':'1390ms'}} onClick={event=>openDialogBubble(reviewDialog.current,event.currentTarget)} aria-label="Read Giffy Real Estate Google reviews, excellent, based on 12 reviews">
       <span className="avatar-stack" aria-hidden="true">{reviews.map(r=><span key={r.initial} style={{background:r.color}}>{r.initial}</span>)}</span>
       <span className="review-copy"><span className="review-rating"><Stars/><span className="excellent">Excellent</span></span><span className="review-count">12 Google reviews <BadgeCheck size={12}/></span><small>Verified by Trustindex</small></span>
      </button>
@@ -371,11 +373,10 @@ function App() {
     <div className="craft-ribbon craft-ribbon-bottom" aria-hidden="true">{Array.from({length:8},(_,i)=><span key={i}>LIST &amp; PREPARE <b>✳</b> MANAGE &amp; MAINTAIN <b>✳</b> REPORT &amp; SUPPORT <b>✳</b></span>)}</div>
    </section>
    <section className="reference-card reference-leadership restored-leadership" id="our-experience" aria-labelledby="experience-title">
-    <div className="reference-leadership-brand">◇ GIFFY<br/><small>REAL ESTATE</small></div>
     <img className="reference-portrait" src="/images/giffy-ceo.jpg" alt="Gift Preye Solomon, founder and CEO of Giffy Real Estate" loading="lazy"/>
-    <div className="reference-leadership-copy experience-copy-content"><span className="experience-eyebrow">Our Experience</span><h2 id="experience-title">With A Decade Of Experience, We're Experts At Getting It Right The First Time.</h2><p>Giffy Real Estate LLC is a leading real estate company in Dubai, offering a premium portfolio of luxury and high-end properties. Our mission is to provide every client with an exceptional, seamless, and personalized experience—whether you are buying, selling, or investing in Dubai's rapidly growing property market.</p><button className="experience-view-more" onClick={()=>inquire('Meet the Giffy team')}>View More <ArrowUpRight size={15}/></button></div>
+    <div className="reference-leadership-copy experience-copy-content"><span className="experience-eyebrow">Our Experience</span><h2 id="experience-title">With A Decade Of Experience, We're Experts At Getting It Right The First Time.</h2><p>Giffy Real Estate LLC is a leading real estate company in Dubai, offering a premium portfolio of luxury and high-end properties. Our mission is to provide every client with an exceptional, seamless, and personalized experience—whether you are buying, selling, or investing in Dubai's rapidly growing property market.</p><a className="experience-view-more" href="/about">View More <ArrowUpRight size={15}/></a></div>
     <span className="reference-project-count"><b>02</b> / 02 &nbsp;&nbsp; OUR EXPERIENCE ›</span>
-    <aside className="reference-abstract experience-aside"><div><h3>EXPERIENCE THAT COUNTS</h3><p>A decade of market knowledge. Personal guidance for every move. Lasting relationships built on trust.</p><dl className="experience-figures"><div><dt>500+</dt><dd>Happy Clients</dd></div><div><dt>250+</dt><dd>Exclusive Listings</dd></div><div><dt>15+</dt><dd>Developer Partnerships</dd></div></dl></div><span className="reference-care">LOCAL KNOWLEDGE. PERSONAL SERVICE.</span><div className="reference-social"><a href="https://facebook.com/giffyrealestate" aria-label="Giffy on Facebook">f</a><a href="https://instagram.com/giffyrealestate" aria-label="Giffy on Instagram">◎</a></div></aside>
+    <aside className="reference-abstract experience-aside"><div><h3>EXPERIENCE THAT COUNTS</h3><p>A decade of market knowledge. Personal guidance for every move. Lasting relationships built on trust.</p><dl className="experience-figures"><div><dt>500+</dt><dd>Happy Clients</dd></div><div><dt>250+</dt><dd>Exclusive Listings</dd></div><div><dt>15+</dt><dd>Developer Partnerships</dd></div></dl></div><span className="reference-care">LOCAL KNOWLEDGE. PERSONAL SERVICE.</span></aside>
    </section>
 
   </div>

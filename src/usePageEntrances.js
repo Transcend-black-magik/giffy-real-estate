@@ -7,6 +7,8 @@ export default function usePageEntrances(rootRef, pageKey) {
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
   const targets=[...root.querySelectorAll('h1,h2,h3,p,address,dt,dd,figcaption,label,button,a,video,img,.section-index,.about-basic-label,.developer-directory-title>span,.developer-card-top>span,.management-hero-image,.management-feature-icon,[data-project-enter],[data-developer-enter],[data-entrance-group],[data-entrance]')].filter(element => {
    if(element.closest('[aria-hidden="true"],.about-team-track,.about-ownership-track,dialog')) return false;
+   if(element.closest('[data-no-page-entrance]')) return false;
+   if(element.closest('.experience-copy-content')) return false;
    if(element.matches('[data-project-enter],[data-developer-enter]')) return true;
    if(element.closest('[data-project-enter],[data-developer-enter]')) return false;
    if(element.matches('.editorial-project-image img')) return false;
@@ -55,7 +57,7 @@ export default function usePageEntrances(rootRef, pageKey) {
     animations.push(element.animate([
      {opacity:0,translate:offsets[direction]||offsets.bottom,scale:direction==='center'?'.93':'1'},
      {opacity:1,translate:'0 0',scale:'1'}
-    ],{duration:directional?1000:850,delay,easing:'cubic-bezier(.16,1,.3,1)',fill:'backwards'}));
+    ],{duration:element.hasAttribute('data-entrance-duration')?Number(element.dataset.entranceDuration):(directional?1000:850),delay,easing:'cubic-bezier(.16,1,.3,1)',fill:'backwards'}));
    }
    });
   };

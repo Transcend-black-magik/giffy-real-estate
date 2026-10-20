@@ -187,10 +187,10 @@
 .gv-pathways .gv-pathway-card:hover,.gv-pathways .gv-pathway-card:focus{text-decoration:none}
 .gv-pathways .gv-pathway-card h3{font-size:clamp(17px,1.65vw,22px);font-weight:500;line-height:1.12;letter-spacing:-.03em;text-decoration:none;margin-bottom:0}
 .gv-pathways .gv-pathway-card p{font-size:12px;line-height:1.6;color:#eeeeee;margin-top:9px;max-height:95px;overflow:hidden;transition:max-height .25s,opacity .25s,margin .25s}
-.gv-pathways .gv-pathway-card:not(:first-child):not(:hover):not(:focus-visible) p{max-height:0;margin-top:0;opacity:0}
+.gv-pathways .gv-pathway-card:not(:hover):not(:focus-visible) p{max-height:0;margin-top:0;opacity:0}
 .gv-pathways .gv-pathway-card:after{background:linear-gradient(0deg,#111111d9,transparent 65%)}
 .gv-pathways .gv-card-arrow{width:35px;height:35px;top:15px;right:15px;transition:opacity .2s}
-.gv-pathways .gv-pathway-card:not(:first-child):not(:hover):not(:focus-visible) .gv-card-arrow{opacity:0}
+.gv-pathways .gv-pathway-card:not(:hover):not(:focus-visible) .gv-card-arrow{opacity:0}
 .gv-pathways .gv-centered-action{margin-top:30px}
 @media(max-width:650px){.gv-pathways{padding:36px 0}.gv-pathways .gv-section-heading{margin-bottom:23px}.gv-pathways .gv-section-heading h2{font-size:28px}.gv-pathways .gv-section-heading p{font-size:12px}.gv-pathways .gv-section-heading p br{display:none}.gv-pathways .gv-tabs{gap:10px;margin-bottom:24px}.gv-pathways .gv-tabs button{min-width:0;min-height:42px;font-size:11px;padding:10px}.gv-pathways .gv-pathway-grid{gap:13px}.gv-pathways .gv-pathway-card{aspect-ratio:.7;padding:18px 13px;border-radius:13px}.gv-pathways .gv-pathway-card h3{font-size:18px}.gv-pathways .gv-pathway-card p{font-size:11px;line-height:1.5}.gv-pathways .gv-card-arrow{width:29px;height:29px;top:12px;right:12px}}
 /* Golden Visa sections slide over and stack on the previous panel as you scroll. */
@@ -260,7 +260,7 @@
 @media(max-width:650px){.gv-stack-panel.gv-benefits-panel{padding:100px 0}.gv-benefits-panel>.gv-benefits{padding-top:15px;padding-bottom:15px}}
 @media(max-width:360px){.gv-stack-panel.gv-benefits-panel{padding:130px 0}}
 /* Quiet contour lines and a soft stone gradient distinguish the process section. */
-.gv-stack-panel.gv-process-panel{position:sticky;isolation:isolate;overflow:hidden;background:radial-gradient(ellipse at 12% 10%,#d19b5717 0,transparent 34%),radial-gradient(ellipse at 88% 92%,#747b8610 0,transparent 38%),linear-gradient(135deg,#f5f4f1 0%,#fff 52%,#f3f3f2 100%)}
-.gv-process-panel:before{position:absolute;inset:0;z-index:0;content:"";pointer-events:none;opacity:.52;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 900' fill='none'%3E%3Cpath d='M-120 230C110 70 220 390 445 230S770 70 995 230s335 160 565 0M-120 275C110 115 220 435 445 275S770 115 995 275s335 160 565 0M-120 320C110 160 220 480 445 320S770 160 995 320s335 160 565 0M-120 660C110 500 220 820 445 660s325-160 550 0 335 160 565 0M-120 705C110 545 220 865 445 705s325-160 550 0 335 160 565 0M-120 750C110 590 220 910 445 750s325-160 550 0 335 160 565 0' stroke='%23b28b5b' stroke-opacity='.26' stroke-width='1'/%3E%3C/svg%3E");background-position:center;background-size:cover}
+.gv-stack-panel.gv-process-panel{position:sticky;isolation:isolate;overflow:hidden;background:radial-gradient(ellipse at 12% 10%,#11111112 0,transparent 34%),radial-gradient(ellipse at 88% 92%,#0000000c 0,transparent 38%),linear-gradient(135deg,#eeeeee 0%,#fff 52%,#e5e5e5 100%)}
+.gv-process-panel:before{position:absolute;inset:0;z-index:0;content:"";pointer-events:none;opacity:.52;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 900' fill='none'%3E%3Cpath d='M-120 230C110 70 220 390 445 230S770 70 995 230s335 160 565 0M-120 275C110 115 220 435 445 275S770 115 995 275s335 160 565 0M-120 320C110 160 220 480 445 320S770 160 995 320s335 160 565 0M-120 660C110 500 220 820 445 660s325-160 550 0 335 160 565 0M-120 705C110 545 220 865 445 705s325-160 550 0 335 160 565 0M-120 750C110 590 220 910 445 750s325-160 550 0 335 160 565 0' stroke='%23333333' stroke-opacity='.26' stroke-width='1'/%3E%3C/svg%3E");background-position:center;background-size:cover}
 .gv-process-panel>.gv-process{position:relative;z-index:1}
 @media(max-width:650px){.gv-process-panel:before{opacity:.38;background-position:center;background-size:auto 100%}}
