@@ -44,10 +44,9 @@ export default function PageRouter({ renderPage }) {
    const next=new URL(url,window.location.href);
    if(next.hash){next.pathname=legacySections[next.hash.slice(1)]||next.pathname;next.hash='';}
    const same=normalizePath(next.pathname)===normalizePath(currentPath.current);
-   if(same && historyChange) {
-    if(next.search!==location.search) history.pushState({},'',next.pathname+next.search);
+   if(same) {
+    if(historyChange && next.search!==location.search) history.pushState({},'',next.pathname+next.search);
     if(normalizePath(next.pathname)==='/contact') {
-     if(next.search!==location.search) history.replaceState({},'',next.pathname+next.search);
      placePage(next.pathname);
     }
     else placePage(next.pathname);
