@@ -11,3 +11,20 @@ Explore reference architecture image: Design Building in Cascais, Portugal, by F
 Vlog videos downloaded from the VLOGS section of https://giffyrealestate.com/:
 public/videos/vlog-property-tips.mp4: https://giffyrealestate.com/wp-content/uploads/2025/11/home_video_3.mp4
 public/videos/vlog-golden-visa.mp4: https://giffyrealestate.com/wp-content/uploads/2025/11/home_video_4.mp4
+
+About page image series: Pexels stock photography, downloaded locally.
+https://www.pexels.com/photo/modern-luxury-office-interior-design-with-open-workspace-33342702/
+https://www.pexels.com/photo/people-in-the-office-having-a-meeting-7163378/
+https://www.pexels.com/photo/beige-sofa-near-glass-window-7750027/
+https://www.pexels.com/photo/elegant-modern-office-interior-design-with-glass-walls-33342712/
+https://www.pexels.com/photo/couch-in-room-8092177/
+https://www.pexels.com/photo/interior-of-a-modern-apartment-room-19650953/
+https://www.pexels.com/photo/modern-luxury-office-interior-design-33342710/
+https://www.pexels.com/photo/cozy-living-room-with-beige-sofa-and-natural-light-30380646/
+
+About Vlogs section: the four videos from the original Giffy homepage VLOGS section.
+Home tour: https://giffyrealestate.com/wp-content/uploads/2025/11/home_video_5.mp4
+Buying tips: https://giffyrealestate.com/wp-content/uploads/2025/11/home_video_4.mp4
+Golden Visa: https://giffyrealestate.com/wp-content/uploads/2025/11/home_video_3.mp4
+Imtiaz event: https://giffyrealestate.com/wp-content/uploads/2026/03/IMT-AWARD.mp4
+Video posters extracted from the corresponding original video frames.
