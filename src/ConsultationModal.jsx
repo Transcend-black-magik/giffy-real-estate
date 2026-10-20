@@ -9,6 +9,7 @@ export function ConsultationProvider({ children }) {
    const link=event.target.closest('[data-book-consultation]');
    if(!link) return;
    if(event.button!==0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+   document.querySelectorAll('.route-header details').forEach(menu=>{menu.removeAttribute('open');menu.classList.add('menu-dismissed');});
    event.preventDefault();event.stopPropagation();setPurpose(link.dataset.consultationPurpose||'Book a consultation');setOpen(true);
   };
   const show=event=>{setPurpose(event.detail||'Speak to an advisor');setOpen(true);};

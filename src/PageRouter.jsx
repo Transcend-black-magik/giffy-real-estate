@@ -55,11 +55,7 @@ export default function PageRouter({ renderPage }) {
     placePage(next.pathname);
    };
    try {
-    if(document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches){
-     document.documentElement.classList.add('route-transition');
-     const transition=document.startViewTransition(commit);
-     await transition.finished;
-    } else if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
      const surface=document.querySelector('.route-content');
      const exitX=direction==='forward'?'-100%':'100%';
      const enterX=direction==='forward'?'100%':'-100%';
@@ -67,8 +63,8 @@ export default function PageRouter({ renderPage }) {
      commit();
      await surface.animate([{transform:`translateX(${enterX})`},{transform:'translateX(0)'}],{duration:900,easing:'cubic-bezier(.22,1,.36,1)'}).finished;
    } else commit();
-   contentRef.current.querySelectorAll('.hero-body .enter,.hero-footer .enter').forEach(element=>element.getAnimations().forEach(animation=>{animation.currentTime=0;animation.play();}));
-   } finally {busy.current=false;document.documentElement.classList.remove('route-transition');delete document.documentElement.dataset.routeDirection;window.dispatchEvent(new CustomEvent('giffy:route-entered'));}
+
+   } finally {busy.current=false;document.documentElement.classList.remove('route-transition');delete document.documentElement.dataset.routeDirection;}
   };
   const click = event => {
    const anchor=event.target.closest('a[href]');
@@ -77,6 +73,7 @@ export default function PageRouter({ renderPage }) {
    if(url.origin!==location.origin || (!sitePaths.includes(normalizePath(url.pathname)) && !/^\/projects\/[^/]+$/.test(normalizePath(url.pathname)))) return;
    event.preventDefault();
    document.querySelectorAll('.route-header details[open]').forEach(menu=>menu.removeAttribute('open'));
+   if(document.activeElement instanceof HTMLElement) document.activeElement.blur();
    change(url.href);
   };
   const closeMenu=event=>{if(event.key==='Escape'||(event.type==='pointerdown'&&!event.target.closest('.route-header')))document.querySelectorAll('.route-header details[open]').forEach(menu=>menu.removeAttribute('open'));};
@@ -86,7 +83,12 @@ export default function PageRouter({ renderPage }) {
   return ()=>{document.removeEventListener('keydown',closeMenu);document.removeEventListener('pointerdown',closeMenu);document.removeEventListener('click',click);window.removeEventListener('popstate',pop);};
  },[]);
  return <>
-  <div className="route-header" data-current-page={normalizePath(path)} dangerouslySetInnerHTML={{__html:siteHeaderMarkup()}}/>
+  <div className="route-header" data-current-page={normalizePath(path)} onClickCapture={event=>{
+   if(event.target.closest('summary')) event.target.closest('details')?.classList.remove('menu-dismissed');
+   if(!event.target.closest('a[href]')) return;
+   event.currentTarget.querySelectorAll('details').forEach(menu=>{menu.removeAttribute('open');menu.classList.add('menu-dismissed');});
+   if(document.activeElement instanceof HTMLElement) document.activeElement.blur();
+  }} onMouseLeave={event=>event.currentTarget.querySelectorAll('.menu-dismissed').forEach(menu=>menu.classList.remove('menu-dismissed'))} dangerouslySetInnerHTML={{__html:siteHeaderMarkup()}}/>
   <div className="route-surface"><div className="route-content unified-entrances" ref={contentRef}><SiteEntry key={path}>{renderPage(path)}</SiteEntry></div></div>
  </>;
 }

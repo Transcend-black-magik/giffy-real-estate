@@ -836,12 +836,14 @@ html{scroll-padding-top:calc(var(--site-header-height) + 20px)}
 .giffy-contact-form>button:focus-visible{outline:2px solid #bd8c50;outline-offset:3px}
 .giffy-contact-status{margin:0;color:#898d92;font-size:10px;line-height:1.6}
 @media(max-width:600px){.giffy-contact-fields{gap:14px}.giffy-contact-form input{min-height:50px}.giffy-contact-form textarea{min-height:180px}}
-/* The route entrance controller owns reveals; older observers may still mark visibility. */
-.unified-entrances .about-reveal-ready,.unified-entrances .about-reveal-ready.is-revealed,.unified-entrances .content-entrance,.unified-entrances [data-project-enter],.unified-entrances .developer-directory [data-developer-enter]{opacity:1;transform:none!important;translate:none;animation:none!important;transition:none!important}
+/* Retire legacy reveals: one controller animates elements once per route. */
+.unified-entrances.unified-entrances.unified-entrances.unified-entrances .about-reveal-ready,
+.unified-entrances.unified-entrances.unified-entrances.unified-entrances .content-entrance,
+.unified-entrances.unified-entrances.unified-entrances.unified-entrances [data-project-enter],
+.unified-entrances.unified-entrances.unified-entrances.unified-entrances [data-developer-enter]{opacity:1;transform:none;translate:none;animation:none!important;transition:none!important}
 .unified-entrances .editorial-project-image img{transform:none!important;transition:filter .3s!important}
 .unified-entrances .about-title-drop,.unified-entrances .project-detail-panel,.unified-entrances .project-detail-visual img,.unified-entrances .giffy-contact-info,.unified-entrances .giffy-contact-form{animation:none!important}
-.unified-entrances .page-entrance-target:not(.page-entrance-visible){opacity:0!important}
-.unified-entrances .page-entrance-target.page-entrance-visible{opacity:1}
+.route-surface{overflow-x:clip}
 /* Keep nested mobile dropdowns inside their menu panel at every mobile breakpoint. */
 .hamburger-lines{display:flex;flex-direction:column;gap:4px;width:18px}
 .hamburger-lines i{display:block;width:18px;height:1.5px;background:currentColor;transition:transform .2s,opacity .2s}
@@ -849,7 +851,7 @@ html{scroll-padding-top:calc(var(--site-header-height) + 20px)}
 .error-mobile-menu[open] .hamburger-lines i:nth-child(2){opacity:0}
 .error-mobile-menu[open] .hamburger-lines i:last-child{transform:translateY(-5.5px) rotate(-45deg)}
 @media(max-width:900px){.route-header .error-mobile-menu{position:static}.route-header .error-mobile-menu>nav{display:flex;flex-direction:column;max-height:calc(100dvh - var(--site-header-height) - 20px);overflow:auto}.route-header .error-mobile-menu .projects-nav-menu{display:block;width:100%}.route-header .error-mobile-menu .projects-nav-dropdown{position:static;width:100%;translate:none;visibility:visible;opacity:1}.route-header .error-mobile-menu .projects-nav-menu:not([open])>.projects-nav-dropdown{display:none}}
-@media(prefers-reduced-motion:reduce){.unified-entrances .page-entrance-target:not(.page-entrance-visible){opacity:1}}
+
 /* Property management: spacious split hero and three service columns. */
 .management-page-shell{background:#fff;color:#111}
 .management-page{max-width:1440px;margin:0 auto;padding:calc(var(--site-header-height,58px) + 48px) 4.5% 55px;font-family:'DM Sans','Plus Jakarta Sans',Arial,sans-serif;scroll-margin-top:var(--site-header-height)}
@@ -876,3 +878,6 @@ html{scroll-padding-top:calc(var(--site-header-height) + 20px)}
 .management-features p{font-size:13px;line-height:1.6;color:#696b73;margin:0;max-width:345px}
 @media(min-width:1500px){.management-page{padding-top:calc(var(--site-header-height) + 65px)}.management-hero{gap:9%}.management-team-proof{margin-top:44px}}
 @media(max-width:700px){.management-page{padding:calc(var(--site-header-height,58px) + 32px) 6% 45px}.management-hero{grid-template-columns:1fr;gap:30px}.management-hero-copy h1{font-size:clamp(34px,8vw,48px);line-height:1.2;margin-bottom:20px}.management-hero-copy>p{font-size:15px;margin-bottom:24px}.management-team-proof{margin-top:26px}.management-hero-actions a{font-size:13px;padding:11px 18px;min-height:45px}.management-hero-image{aspect-ratio:1.15;border-radius:17px}.management-features{grid-template-columns:1fr;gap:28px;margin-top:35px}.management-features article{display:grid;grid-template-columns:43px 1fr;column-gap:16px}.management-feature-icon{grid-row:1/3;margin:0}.management-features h2{font-size:19px;margin-bottom:9px}.management-features p{max-width:none;font-size:14px}}
+/* A selected link dismisses hover-open dropdowns as well as native details. */
+.route-header .projects-native-menu.menu-dismissed>.projects-nav-dropdown{opacity:0;visibility:hidden;pointer-events:none;translate:0 7px}
+.route-header .error-mobile-menu.menu-dismissed>nav{display:none}

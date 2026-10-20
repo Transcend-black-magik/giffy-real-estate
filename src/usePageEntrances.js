@@ -1,13 +1,13 @@
 import { useLayoutEffect } from 'react';
 
-// One entrance lifecycle for every route, started after its page slide finishes.
+// Animate each element once per mount; content stays readable after completion.
 export default function usePageEntrances(rootRef, pageKey) {
  useLayoutEffect(() => {
   const root=rootRef.current;
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
-  const targets=[...root.querySelectorAll('h1,h2,h3,p,address,dt,dd,figcaption,label,button,a,video,img,.section-index,.about-basic-label,.developer-directory-title>span,.developer-card-top>span')].filter(element => {
+  const targets=[...root.querySelectorAll('h1,h2,h3,p,address,dt,dd,figcaption,label,button,a,video,img,.section-index,.about-basic-label,.developer-directory-title>span,.developer-card-top>span,.management-hero-image')].filter(element => {
    if(element.closest('[aria-hidden="true"],.about-team-track,.about-ownership-track,dialog')) return false;
-   if(element.matches('img') && element.closest('.about-signature-thumbnails')) return false;
+   if(element.matches('img') && element.closest('.about-signature-thumbnails,.management-hero-image')) return false;
    if(element.matches('a,button,figcaption') && element.querySelector('h1,h2,h3,p,img,video')) return false;
    return !element.closest('.hero-body,.hero-footer');
   });
@@ -40,7 +40,7 @@ export default function usePageEntrances(rootRef, pageKey) {
   };
   window.addEventListener('giffy:route-entered',start);
   reduced.addEventListener('change',start);
-  if(!document.documentElement.hasAttribute('data-route-direction')) start();
+  start();
   return ()=>{
    cancelAnimationFrame(frame);observer?.disconnect();animations.forEach(animation=>animation.cancel());
    window.removeEventListener('giffy:route-entered',start);reduced.removeEventListener('change',start);
