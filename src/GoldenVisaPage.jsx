@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ArrowUpRight, ArrowRight, Check, Plus, Minus, ShieldCheck, UsersRound, Building2, FileCheck2, Globe2, Handshake, BadgeCheck, Landmark, Star } from 'lucide-react';
 import { siteFooterMarkup } from './site-chrome.js';
 import teamMembers from './team-members.json';
@@ -48,7 +48,6 @@ function AdvisorLink({entrance,entranceDelay,children='Speak to an advisor',clas
  return <a data-entrance={entrance} data-entrance-delay={entranceDelay} className={`gv-button ${className}`} href="/contact?consultation=1" data-book-consultation data-consultation-purpose={purpose}>{children}<ArrowUpRight size={16}/></a>;
 }
 export default function GoldenVisaPage(){
- const stackRef=useRef(null);
  const heroSceneRef=useRef(null);
  const heroPinRef=useRef(null);
  const heroContentRef=useRef(null);
@@ -57,21 +56,35 @@ export default function GoldenVisaPage(){
  const [selected,setSelected]=useState([]);
  const [openFaq,setOpenFaq]=useState(0);
  useLayoutEffect(()=>{document.title='UAE Golden Visa | Giffy Real Estate';},[]);
- useLayoutEffect(()=>{
-  const stack=stackRef.current;
-  const panels=[...stack.children];
-  const measure=()=>{
+ useEffect(()=>{
+  const preference=window.matchMedia('(prefers-reduced-motion: reduce)');
+  let timer,previousScroll=window.scrollY,scrollingDown=false,settling=false;
+  const settle=()=>{
+   if(settling||preference.matches||window.innerWidth<320)return;
    const header=document.querySelector('.site-header')?.getBoundingClientRect().height||58;
-   panels.forEach((panel,index)=>{
-    const inset=header+index*9;
-    panel.style.setProperty('--gv-stack-top',`${inset-Math.max(0,panel.offsetHeight-(window.innerHeight-inset))}px`);
+   const range=Math.min(160,window.innerHeight*.18);
+   const panel=[...document.querySelectorAll('.gv-section-stack > .gv-stack-panel')].find(element=>{
+    const gap=element.getBoundingClientRect().top-header;
+    const approaching=scrollingDown&&gap>1&&gap<range;
+    const last=element.matches('.gv-section-stack > .gv-stack-panel:last-of-type');
+    const leaving=last&&gap< -1&&gap> -range;
+    return approaching||leaving;
    });
+   if(!panel)return;
+   const target=window.scrollY+panel.getBoundingClientRect().top-header;
+   settling=true;
+   window.scrollTo({top:target,behavior:'smooth'});
+   window.setTimeout(()=>{settling=false;},650);
   };
-  const observer=new ResizeObserver(measure);
-  panels.forEach(panel=>observer.observe(panel));
-  window.addEventListener('resize',measure);
-  measure();
-  return ()=>{observer.disconnect();window.removeEventListener('resize',measure);};
+  const onScroll=()=>{
+   const current=window.scrollY;
+   if(Math.abs(current-previousScroll)>.5)scrollingDown=current>previousScroll;
+   previousScroll=current;
+   window.clearTimeout(timer);
+   if(!settling)timer=window.setTimeout(settle,180);
+  };
+  window.addEventListener('scroll',onScroll,{passive:true});
+  return()=>{window.removeEventListener('scroll',onScroll);window.clearTimeout(timer);};
  },[]);
  const assess=()=>window.dispatchEvent(new CustomEvent('giffy:consultation',{detail:`Golden Visa assessment${selected.length?': '+selected.join('; '):''}`}));
  return <div className="golden-visa-page"><main>
@@ -106,7 +119,7 @@ export default function GoldenVisaPage(){
    <div className="gv-centered-action"><a className="gv-button" href="/projects">Explore Dubai properties <ArrowRight size={16}/></a></div>
   </div></section>
   <section className="gv-assessment-banner gv-container"><div className="gv-banner-photo" aria-hidden="true"/><div><span className="gv-eyebrow">A CONVERSATION CAN CHANGE WHAT COMES NEXT.</span><h2>Your Golden opportunity<br/>starts with a clear plan.</h2><p>Let’s connect your property goals with your future in Dubai.</p></div><AdvisorLink>Start my assessment</AdvisorLink></section>
-  <div className="gv-section-stack" ref={stackRef}>
+  <div className="gv-section-stack">
   <div className="gv-stack-panel">
   <section className="gv-thresholds gv-container" aria-labelledby="gv-thresholds-title">
    <div className="gv-section-heading"><span className="gv-eyebrow">CLARITY BEFORE COMMITMENT</span><h2 id="gv-thresholds-title">The investment essentials.</h2><p>A clear starting point for a considered decision.</p></div>

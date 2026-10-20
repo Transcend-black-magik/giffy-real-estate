@@ -194,16 +194,17 @@
 .gv-pathways .gv-centered-action{margin-top:30px}
 @media(max-width:650px){.gv-pathways{padding:36px 0}.gv-pathways .gv-section-heading{margin-bottom:23px}.gv-pathways .gv-section-heading h2{font-size:28px}.gv-pathways .gv-section-heading p{font-size:12px}.gv-pathways .gv-section-heading p br{display:none}.gv-pathways .gv-tabs{gap:10px;margin-bottom:24px}.gv-pathways .gv-tabs button{min-width:0;min-height:42px;font-size:11px;padding:10px}.gv-pathways .gv-pathway-grid{gap:13px}.gv-pathways .gv-pathway-card{aspect-ratio:.7;padding:18px 13px;border-radius:13px}.gv-pathways .gv-pathway-card h3{font-size:18px}.gv-pathways .gv-pathway-card p{font-size:11px;line-height:1.5}.gv-pathways .gv-card-arrow{width:29px;height:29px;top:12px;right:12px}}
 /* Golden Visa sections slide over and stack on the previous panel as you scroll. */
-.gv-section-stack{position:relative;isolation:isolate;margin-top:45px}
-.gv-stack-panel{position:sticky;top:var(--gv-stack-top,var(--site-header-height));min-height:calc(100dvh - var(--site-header-height));display:flex;align-items:center;background:#fff;border-radius:22px 22px 0 0;box-shadow:0 -10px 30px #26283008;padding:25px 0}
+.gv-section-stack{position:relative;isolation:isolate;display:grid;grid-template-columns:minmax(0,1fr);row-gap:35svh;padding:0;align-items:start;margin-top:45px}
+.gv-stack-panel{position:sticky;top:var(--site-header-height);height:calc(100dvh - var(--site-header-height));min-height:0;box-sizing:border-box;overflow:hidden;display:flex;align-items:center;background:#fff;border-radius:22px 22px 0 0;box-shadow:0 -10px 30px #26283008;padding:25px 0}
 .gv-stack-panel:nth-child(1){z-index:1}
 .gv-stack-panel:nth-child(2){z-index:2}
 .gv-stack-panel:nth-child(3){z-index:3}
 .gv-stack-panel:nth-child(4){z-index:4}
 .gv-stack-panel>.gv-thresholds,.gv-stack-panel>.gv-benefits,.gv-stack-panel>.gv-process{padding-top:35px;padding-bottom:35px}
 .gv-stack-panel>.gv-checklist{margin-top:20px;margin-bottom:20px}
+@media(max-width:900px){.gv-section-stack{row-gap:30svh}}
 @media(max-width:650px){.gv-section-stack{margin-top:25px}.gv-stack-panel{padding:18px 0;border-radius:16px 16px 0 0}.gv-stack-panel>.gv-thresholds,.gv-stack-panel>.gv-benefits,.gv-stack-panel>.gv-process{padding-top:22px;padding-bottom:22px}}
-@media(prefers-reduced-motion:reduce){.gv-stack-panel{position:relative;top:auto;min-height:0;box-shadow:none;border-radius:0}}
+@media(prefers-reduced-motion:reduce){.gv-section-stack{display:block;isolation:auto}.gv-stack-panel{position:relative;top:auto;height:auto;min-height:0;overflow:visible;box-shadow:none;border-radius:0}}
 /* Google reviews replace the logo strip beneath the Golden Visa mosaic. */
 .gv-google-reviews{position:relative;display:grid;grid-template-columns:210px minmax(0,1fr);gap:25px;text-align:left;margin-top:24px;padding:24px 18px 49px;border:1px solid #f2f2f2;border-radius:17px;background:#fff}
 .gv-google-summary{display:flex;flex-direction:column;justify-content:center;align-items:center;padding:15px 0}

@@ -9,8 +9,6 @@ export default function useHeroPush(sceneRef, pinRef, contentRef) {
   const nextSection=scene?.nextElementSibling;
   if(!scene||!pin||!content)return;
 
-  const originalNextVisibility=nextSection?.style.visibility??'';
-  const originalNextInert=nextSection?.inert??false;
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
   let frame=0,travel=1,pinTop=0,available=1;
   const clamp=value=>Math.max(0,Math.min(1,value));
@@ -22,16 +20,11 @@ export default function useHeroPush(sceneRef, pinRef, contentRef) {
     pin.style.removeProperty('top');
     content.style.removeProperty('transform');
     content.inert=false;
-    if(nextSection){nextSection.style.visibility=originalNextVisibility;nextSection.inert=originalNextInert;}
     return;
    }
    const progress=clamp((pinTop-scene.getBoundingClientRect().top)/travel);
    content.style.transform=`translate3d(0,${-available*progress}px,0)`;
    content.inert=progress>.99;
-   if(nextSection){
-    nextSection.style.visibility=progress<.97?'hidden':originalNextVisibility;
-    nextSection.inert=progress<.97||originalNextInert;
-   }
   };
   const schedule=()=>{if(!frame)frame=requestAnimationFrame(paint);};
   const measure=()=>{
@@ -61,7 +54,6 @@ export default function useHeroPush(sceneRef, pinRef, contentRef) {
    window.removeEventListener('resize',measure);
    reduced.removeEventListener('change',measure);
    content.inert=false;
-   if(nextSection){nextSection.style.visibility=originalNextVisibility;nextSection.inert=originalNextInert;}
    scene.style.removeProperty('height');
    nextSection?.style.removeProperty('--gv-transition-overlap');
    pin.style.removeProperty('top');
