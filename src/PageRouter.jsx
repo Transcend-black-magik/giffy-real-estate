@@ -8,18 +8,29 @@ function replayEntranceAnimations() {
  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
  const root=document.querySelector('.route-content');
  if(!root) return;
+ const isVisible=element=>{
+  const rect=element.getBoundingClientRect();
+  return rect.bottom>0&&rect.top<innerHeight&&rect.right>0&&rect.left<innerWidth;
+ };
  const entries=[
   ['.enter','enter'],
-  ['.about-reveal-ready.is-revealed','is-revealed'],
-  ['.projects-content-visible','projects-content-visible'],
-  ['.developer-visible','developer-visible'],
+  ['.about-basic-shell .about-reveal-ready','is-revealed'],
+  ['.projects-page [data-project-enter]','projects-content-visible'],
+  ['.developer-directory [data-developer-enter]','developer-visible'],
  ];
  entries.forEach(([selector,className])=>{
   root.querySelectorAll(selector).forEach(element=>{
+   if(!isVisible(element)) return;
    element.classList.remove(className);
    void element.offsetWidth;
    requestAnimationFrame(()=>element.classList.add(className));
   });
+ });
+ root.querySelectorAll('.about-title-drop,.giffy-contact-info,.giffy-contact-form,.project-detail-visual img,.project-detail-panel').forEach(element=>{
+  if(!isVisible(element)) return;
+  element.style.animation='none';
+  void element.offsetWidth;
+  requestAnimationFrame(()=>element.style.removeProperty('animation'));
  });
  window.dispatchEvent(new CustomEvent('giffy:route-entered'));
 }
